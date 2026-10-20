@@ -14,7 +14,9 @@ use App\Http\Controllers\Tenant\DashboardController;
 */
 Route::prefix('superadmin')->group(function () {
     // Public
-    Route::post('login', [SuperAuthController::class, 'login']);
+    Route::post('login', [\App\Http\Controllers\Admin\AuthController::class, 'login']);
+    Route::post('forgot-password', [\App\Http\Controllers\Admin\PasswordResetController::class, 'forgotPassword']);
+    Route::post('reset-password', [\App\Http\Controllers\Admin\PasswordResetController::class, 'resetPassword']);
 
     // Protected
     Route::middleware('auth:superadmin')->group(function () {
@@ -27,6 +29,9 @@ Route::prefix('superadmin')->group(function () {
 
         // Diagnostic centers (tenants)
         Route::apiResource('diagnostics', DiagnosticController::class);
+
+        // Admin management
+        Route::apiResource('admins', \App\Http\Controllers\SuperAdmin\AdminController::class);
 
         // Subscription management
         Route::prefix('diagnostics/{id}/subscription')->group(function () {
