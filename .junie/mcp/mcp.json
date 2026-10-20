@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "laravel-boost": {
+            "command": "/Applications/MAMP/bin/php/php8.3.14/bin/php",
+            "args": [
+                "/Applications/MAMP/htdocs/hospitalmanagement/artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
