@@ -25,3 +25,13 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+.agents/
+.claude/
+.editorconfig
+.env.example
+.gitattributes
+.gitignore
+.junie/
+.kiro/
+.mcp.json
+.npmrc
