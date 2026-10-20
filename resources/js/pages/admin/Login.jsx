@@ -1,28 +1,45 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSuperAdmin } from '../../context/SuperAdminContext';
-import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import { useAdmin } from '../../context/AdminContext';
+import api from '../../api/axios';
+import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Spinner from '../../components/ui/Spinner';
 
-export default function SuperAdminLogin() {
-    const { login } = useSuperAdmin();
+export default function AdminLogin() {
+    const { login } = useAdmin();
     const navigate = useNavigate();
     const [form, setForm] = useState({ email: '', password: '' });
     const [showPwd, setShowPwd] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [forgotMode, setForgotMode] = useState(false);
+    const [forgotLoading, setForgotLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
             await login(form.email, form.password);
-            toast.success('Welcome back, Super Admin!');
-            navigate('/superadmin/dashboard');
+            toast.success('Welcome back!');
+            navigate('/admin/dashboard');
         } catch (err) {
             toast.error(err.response?.data?.message || 'Login failed');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleForgotSubmit = async (e) => {
+        e.preventDefault();
+        setForgotLoading(true);
+        try {
+            const res = await api.post('/admin/forgot-password', { email: form.email });
+            toast.success(res.data?.message || 'Password reset link sent.');
+            setForgotMode(false);
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Could not send reset link');
+        } finally {
+            setForgotLoading(false);
         }
     };
 
@@ -140,16 +157,16 @@ export default function SuperAdminLogin() {
                     </div>
 
                     <h2 className="text-3xl font-bold text-white text-center mb-3">
-                        Super Admin Portal
+                        Admin Portal
                     </h2>
                     <p className="text-blue-300/80 text-center text-sm max-w-xs leading-relaxed">
-                        Manage all diagnostic centers, subscriptions, and platform settings from one powerful dashboard.
+                        Manage all labs, subscriptions, and platform settings from one powerful dashboard.
                     </p>
 
                     {/* Stats pills */}
                     <div className="flex gap-4 mt-8">
                         {[
-                            { label: 'Centers', value: '∞' },
+                            { label: 'Labs', value: '∞' },
                             { label: 'Control', value: '100%' },
                             { label: 'Uptime', value: '24/7' },
                         ].map(s => (
@@ -182,12 +199,18 @@ export default function SuperAdminLogin() {
                             <p className="text-blue-400 text-xs mt-0.5">Administration</p>
                         </div>
                     </div>
-                    <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-                    <p className="text-slate-400 text-sm mt-1">Sign in to your admin account</p>
+                    <h1 className="text-2xl font-bold text-white">
+                        {forgotMode ? 'Forgot password?' : 'Welcome back'}
+                    </h1>
+                    <p className="text-slate-400 text-sm mt-1">
+                        {forgotMode
+                            ? 'Enter your email and we will send you a reset link'
+                            : 'Sign in to your admin account'}
+                    </p>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-5">
+                <form onSubmit={forgotMode ? handleForgotSubmit : handleSubmit} className="space-y-5">
                     <div>
                         <label className="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
                         <div className="relative">
@@ -203,34 +226,54 @@ export default function SuperAdminLogin() {
                         </div>
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">Password</label>
-                        <div className="relative">
-                            <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
-                            <input
-                                type={showPwd ? 'text' : 'password'}
-                                value={form.password}
-                                onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-                                placeholder="••••••••"
-                                required
-                                className="w-full pl-11 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition text-sm"
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPwd(p => !p)}
-                                className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition"
-                            >
-                                {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
-                            </button>
+                    {!forgotMode && (
+                        <div>
+                            <div className="flex items-center justify-between mb-2">
+                                <label className="block text-sm font-medium text-slate-300">Password</label>
+                                <button
+                                    type="button"
+                                    onClick={() => setForgotMode(true)}
+                                    className="text-xs text-blue-400 hover:text-blue-300 font-medium transition"
+                                >
+                                    Forgot password?
+                                </button>
+                            </div>
+                            <div className="relative">
+                                <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                                <input
+                                    type={showPwd ? 'text' : 'password'}
+                                    value={form.password}
+                                    onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
+                                    placeholder="••••••••"
+                                    required
+                                    className="w-full pl-11 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition text-sm"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPwd(p => !p)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition"
+                                >
+                                    {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <button
                         type="submit"
-                        disabled={loading}
+                        disabled={forgotMode ? forgotLoading : loading}
                         className="w-full py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold rounded-xl shadow-lg shadow-blue-600/30 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60 group mt-2"
                     >
-                        {loading ? (
+                        {forgotMode ? (
+                            forgotLoading ? (
+                                <Spinner size="sm" />
+                            ) : (
+                                <>
+                                    Send Reset Link
+                                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                                </>
+                            )
+                        ) : loading ? (
                             <Spinner size="sm" />
                         ) : (
                             <>
@@ -239,22 +282,18 @@ export default function SuperAdminLogin() {
                             </>
                         )}
                     </button>
+
+                    {forgotMode && (
+                        <button
+                            type="button"
+                            onClick={() => setForgotMode(false)}
+                            className="w-full flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition"
+                        >
+                            <ArrowLeft size={14} />
+                            Back to sign in
+                        </button>
+                    )}
                 </form>
-
-                {/* Divider */}
-                <div className="flex items-center gap-3 my-8">
-                    <div className="flex-1 h-px bg-white/10" />
-                    <span className="text-slate-600 text-xs">OR</span>
-                    <div className="flex-1 h-px bg-white/10" />
-                </div>
-
-                {/* Switch portal */}
-                <p className="text-center text-slate-500 text-sm">
-                    Diagnostic center?{' '}
-                    <a href="/diagnostic/login" className="text-blue-400 hover:text-blue-300 font-medium transition">
-                        Login here →
-                    </a>
-                </p>
 
                 {/* Bottom accent */}
                 <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />

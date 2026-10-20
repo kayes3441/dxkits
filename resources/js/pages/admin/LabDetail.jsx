@@ -16,7 +16,7 @@ const PLANS = [
     { value: 'premium', label: 'Premium', fee: 2000 },
 ];
 
-export default function DiagnosticDetail() {
+export default function LabDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const [tenant, setTenant] = useState(null);
@@ -31,12 +31,12 @@ export default function DiagnosticDetail() {
     const [saving, setSaving] = useState(false);
 
     const fetchTenant = () => {
-        api.get(`/superadmin/diagnostics/${id}`)
+        api.get(`/admin/diagnostics/${id}`)
             .then(r => {
                 setTenant(r.data);
                 setRenewForm(f => ({ ...f, plan: r.data.plan, amount: r.data.monthly_fee }));
                 setPlanForm({ plan: r.data.plan, monthly_fee: r.data.monthly_fee });
-                return api.get(`/superadmin/diagnostics/${id}/subscription/logs`);
+                return api.get(`/admin/diagnostics/${id}/subscription/logs`);
             })
             .then(r => setLogs(r.data))
             .finally(() => setLoading(false));
@@ -48,7 +48,7 @@ export default function DiagnosticDetail() {
         e.preventDefault();
         setSaving(true);
         try {
-            await api.post(`/superadmin/diagnostics/${id}/subscription/renew`, renewForm);
+            await api.post(`/admin/diagnostics/${id}/subscription/renew`, renewForm);
             toast.success('Subscription renewed!');
             setRenewOpen(false);
             fetchTenant();
@@ -61,7 +61,7 @@ export default function DiagnosticDetail() {
 
     const handleSuspend = async () => {
         try {
-            await api.post(`/superadmin/diagnostics/${id}/subscription/suspend`);
+            await api.post(`/admin/diagnostics/${id}/subscription/suspend`);
             toast.success('Tenant suspended');
             fetchTenant();
         } catch {
@@ -71,7 +71,7 @@ export default function DiagnosticDetail() {
 
     const handleActivate = async () => {
         try {
-            await api.post(`/superadmin/diagnostics/${id}/subscription/activate`);
+            await api.post(`/admin/diagnostics/${id}/subscription/activate`);
             toast.success('Tenant activated');
             fetchTenant();
         } catch {
@@ -83,7 +83,7 @@ export default function DiagnosticDetail() {
         e.preventDefault();
         setSaving(true);
         try {
-            await api.post(`/superadmin/diagnostics/${id}/subscription/change-plan`, planForm);
+            await api.post(`/admin/diagnostics/${id}/subscription/change-plan`, planForm);
             toast.success('Plan updated');
             setPlanOpen(false);
             fetchTenant();
@@ -111,7 +111,7 @@ export default function DiagnosticDetail() {
                 </button>
                 <div>
                     <h1 className="text-2xl font-bold text-gray-900">{tenant.name}</h1>
-                    <p className="text-gray-500 text-sm">Diagnostic Center Details</p>
+                    <p className="text-gray-500 text-sm">Lab Details</p>
                 </div>
             </div>
 

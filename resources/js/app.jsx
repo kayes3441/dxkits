@@ -3,26 +3,26 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 // Contexts
-import { SuperAdminProvider } from './context/SuperAdminContext';
+import { AdminProvider } from './context/AdminContext';
 import { TenantProvider } from './context/TenantContext';
 
 // Guards
-import { SuperAdminRoute, TenantRoute } from './components/ProtectedRoute';
+import { AdminRoute, TenantRoute } from './components/ProtectedRoute';
 
 // Layouts
-import SuperAdminLayout from './layouts/SuperAdminLayout';
-import DiagnosticLayout from './layouts/DiagnosticLayout';
+import AdminLayout from './layouts/AdminLayout';
+import LabLayout from './layouts/LabLayout';
 
-// SuperAdmin pages
-import SuperAdminLogin from './pages/superadmin/Login';
-import SuperAdminDashboard from './pages/superadmin/Dashboard';
-import Diagnostics from './pages/superadmin/Diagnostics';
-import DiagnosticDetail from './pages/superadmin/DiagnosticDetail';
-import Subscriptions from './pages/superadmin/Subscriptions';
+// Admin pages
+import AdminLogin from './pages/admin/Login';
+import AdminDashboard from './pages/admin/Dashboard';
+import Labs from './pages/admin/Labs';
+import LabDetail from './pages/admin/LabDetail';
+import Subscriptions from './pages/admin/Subscriptions';
 
-// Diagnostic pages
-import DiagnosticLogin from './pages/diagnostic/Login';
-import DiagnosticDashboard from './pages/diagnostic/Dashboard';
+// Lab pages
+import LabLogin from './pages/lab/Login';
+import LabDashboard from './pages/lab/Dashboard';
 
 // Global CSS
 import '../css/app.css';
@@ -30,7 +30,7 @@ import '../css/app.css';
 function App() {
     return (
         <BrowserRouter>
-            <SuperAdminProvider>
+            <AdminProvider>
                 <TenantProvider>
                     <Toaster
                         position="top-right"
@@ -44,39 +44,39 @@ function App() {
                     />
                     <Routes>
                         {/* Root redirect */}
-                        <Route path="/" element={<Navigate to="/superadmin/login" replace />} />
+                        <Route path="/" element={<Navigate to="/admin/login" replace />} />
 
-                        {/* SuperAdmin */}
-                        <Route path="/superadmin/login" element={<SuperAdminLogin />} />
+                        {/* Admin */}
+                        <Route path="/admin/login" element={<AdminLogin />} />
                         <Route
-                            path="/superadmin"
+                            path="/admin"
                             element={
-                                <SuperAdminRoute>
-                                    <SuperAdminLayout />
-                                </SuperAdminRoute>
+                                <AdminRoute>
+                                    <AdminLayout />
+                                </AdminRoute>
                             }
                         >
-                            <Route path="dashboard" element={<SuperAdminDashboard />} />
-                            <Route path="diagnostics" element={<Diagnostics />} />
-                            <Route path="diagnostics/:id" element={<DiagnosticDetail />} />
+                            <Route path="dashboard" element={<AdminDashboard />} />
+                            <Route path="labs" element={<Labs />} />
+                            <Route path="labs/:id" element={<LabDetail />} />
                             <Route path="subscriptions" element={<Subscriptions />} />
                         </Route>
 
-                        {/* Diagnostic Center */}
-                        <Route path="/diagnostic/login" element={<DiagnosticLogin />} />
+                        {/* Lab */}
+                        <Route path="/lab/login" element={<LabLogin />} />
                         <Route
-                            path="/diagnostic"
+                            path="/lab"
                             element={
                                 <TenantRoute>
-                                    <DiagnosticLayout />
+                                    <LabLayout />
                                 </TenantRoute>
                             }
                         >
-                            <Route path="dashboard" element={<DiagnosticDashboard />} />
+                            <Route path="dashboard" element={<LabDashboard />} />
                         </Route>
                     </Routes>
                 </TenantProvider>
-            </SuperAdminProvider>
+            </AdminProvider>
         </BrowserRouter>
     );
 }

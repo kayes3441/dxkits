@@ -71,7 +71,7 @@ function useOrbCanvas(canvasRef) {
     }, [canvasRef]);
 }
 
-export default function DiagnosticLogin() {
+export default function LabLogin() {
     const { login } = useTenant();
     const navigate = useNavigate();
     const [form, setForm] = useState({ email: '', password: '' });
@@ -86,7 +86,7 @@ export default function DiagnosticLogin() {
         try {
             await login(form.email, form.password);
             toast.success('Welcome back!');
-            navigate('/diagnostic/dashboard');
+            navigate('/lab/dashboard');
         } catch (err) {
             toast.error(err.response?.data?.message || 'Login failed');
         } finally {
@@ -309,7 +309,7 @@ export default function DiagnosticLogin() {
                     </div>
 
                     <h2 className="text-3xl font-bold text-white text-center mb-3 tracking-tight">
-                        Diagnostic Center
+                        Lab
                     </h2>
                     <p className="text-emerald-300/60 text-center text-sm max-w-xs leading-relaxed">
                         Laboratory management — patients, tests, reports and billing in one place.
@@ -362,11 +362,11 @@ export default function DiagnosticLogin() {
                         </div>
                         <div>
                             <p className="text-white font-bold text-base leading-none">LIS Platform</p>
-                            <p className="text-xs mt-0.5" style={{ color: '#34d399' }}>Diagnostic Center</p>
+                            <p className="text-xs mt-0.5" style={{ color: '#34d399' }}>Lab</p>
                         </div>
                     </div>
                     <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-                    <p className="text-sm mt-1" style={{ color: '#475569' }}>Sign in to your diagnostic center</p>
+                    <p className="text-sm mt-1" style={{ color: '#475569' }}>Sign in to your lab</p>
                 </div>
 
                 {/* Form */}
@@ -379,7 +379,7 @@ export default function DiagnosticLogin() {
                                 type="email"
                                 value={form.email}
                                 onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                                placeholder="center@diagnostic.com"
+                                placeholder="lab@example.com"
                                 required
                                 className="w-full pl-11 pr-4 py-3 rounded-xl text-white text-sm transition-all input-field"
                                 style={{
@@ -434,19 +434,6 @@ export default function DiagnosticLogin() {
                         )}
                     </button>
                 </form>
-
-                <div className="flex items-center gap-3 my-8">
-                    <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
-                    <span className="text-xs" style={{ color: '#1e3a2f' }}>OR</span>
-                    <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.07)' }} />
-                </div>
-
-                <p className="text-center text-sm" style={{ color: '#334155' }}>
-                    Super Admin?{' '}
-                    <a href="/superadmin/login" className="font-medium transition-colors" style={{ color: '#34d399' }}>
-                        Admin portal →
-                    </a>
-                </p>
 
                 <div className="absolute bottom-0 left-0 right-0 h-[1px]"
                     style={{ background: 'linear-gradient(90deg,transparent,rgba(16,185,129,0.15),transparent)' }} />

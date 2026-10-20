@@ -1,19 +1,19 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api/axios';
 
-const SuperAdminContext = createContext(null);
+const AdminContext = createContext(null);
 
-export function SuperAdminProvider({ children }) {
+export function AdminProvider({ children }) {
     const [admin, setAdmin] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const token = localStorage.getItem('superadmin_token');
+        const token = localStorage.getItem('admin_token');
         if (token) {
-            api.get('/superadmin/me')
+            api.get('/admin/me')
                 .then(res => setAdmin(res.data.user))
                 .catch(() => {
-                    localStorage.removeItem('superadmin_token');
+                    localStorage.removeItem('admin_token');
                 })
                 .finally(() => setLoading(false));
         } else {
@@ -22,25 +22,25 @@ export function SuperAdminProvider({ children }) {
     }, []);
 
     const login = async (email, password) => {
-        const res = await api.post('/superadmin/login', { email, password });
-        localStorage.setItem('superadmin_token', res.data.token);
+        const res = await api.post('/admin/login', { email, password });
+        localStorage.setItem('admin_token', res.data.token);
         setAdmin(res.data.user);
         return res.data;
     };
 
     const logout = async () => {
         try {
-            await api.post('/superadmin/logout');
+            await api.post('/admin/logout');
         } catch (_) {}
-        localStorage.removeItem('superadmin_token');
+        localStorage.removeItem('admin_token');
         setAdmin(null);
     };
 
     return (
-        <SuperAdminContext.Provider value={{ admin, loading, login, logout }}>
+        <AdminContext.Provider value={{ admin, loading, login, logout }}>
             {children}
-        </SuperAdminContext.Provider>
+        </AdminContext.Provider>
     );
 }
 
-export const useSuperAdmin = () => useContext(SuperAdminContext);
+export const useAdmin = () => useContext(AdminContext);

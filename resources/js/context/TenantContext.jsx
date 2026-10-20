@@ -10,7 +10,7 @@ export function TenantProvider({ children }) {
     useEffect(() => {
         const token = localStorage.getItem('tenant_token');
         if (token) {
-            api.get('/diagnostic/me')
+            api.get('/diagnostic/profile')
                 .then(res => setTenant(res.data.tenant))
                 .catch(() => {
                     localStorage.removeItem('tenant_token');

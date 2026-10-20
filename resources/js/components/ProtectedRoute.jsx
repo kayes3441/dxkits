@@ -1,10 +1,10 @@
 import { Navigate } from 'react-router-dom';
-import { useSuperAdmin } from '../context/SuperAdminContext';
+import { useAdmin } from '../context/AdminContext';
 import { useTenant } from '../context/TenantContext';
 import Spinner from './ui/Spinner';
 
-export function SuperAdminRoute({ children }) {
-    const { admin, loading } = useSuperAdmin();
+export function AdminRoute({ children }) {
+    const { admin, loading } = useAdmin();
 
     if (loading) {
         return (
@@ -14,7 +14,7 @@ export function SuperAdminRoute({ children }) {
         );
     }
 
-    if (!admin) return <Navigate to="/superadmin/login" replace />;
+    if (!admin) return <Navigate to="/admin/login" replace />;
     return children;
 }
 
@@ -29,6 +29,6 @@ export function TenantRoute({ children }) {
         );
     }
 
-    if (!tenant) return <Navigate to="/diagnostic/login" replace />;
+    if (!tenant) return <Navigate to="/lab/login" replace />;
     return children;
 }

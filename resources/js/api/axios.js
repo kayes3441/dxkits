@@ -12,7 +12,7 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
     // Determine which token to use based on the route prefix
     const isTenantRoute = config.url?.startsWith('/diagnostic');
-    const tokenKey = isTenantRoute ? 'tenant_token' : 'superadmin_token';
+    const tokenKey = isTenantRoute ? 'tenant_token' : 'admin_token';
     const token = localStorage.getItem(tokenKey);
 
     if (token) {
@@ -29,10 +29,10 @@ api.interceptors.response.use(
             const isTenantRoute = error.config?.url?.startsWith('/diagnostic');
             if (isTenantRoute) {
                 localStorage.removeItem('tenant_token');
-                window.location.href = '/diagnostic/login';
+                window.location.href = '/lab/login';
             } else {
-                localStorage.removeItem('superadmin_token');
-                window.location.href = '/superadmin/login';
+                localStorage.removeItem('admin_token');
+                window.location.href = '/admin/login';
             }
         }
         return Promise.reject(error);

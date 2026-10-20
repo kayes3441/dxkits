@@ -16,13 +16,13 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email'    => 'required|email',
+            'email' => 'required|email',
             'password' => 'required|string',
         ]);
 
         $tenant = Tenant::where('email', $request->email)->first();
 
-        if (!$tenant || !Hash::check($request->password, $tenant->password)) {
+        if (! $tenant || ! Hash::check($request->password, $tenant->password)) {
             return response()->json(['message' => 'Invalid email or password.'], 401);
         }
 
@@ -37,6 +37,7 @@ class AuthController extends Controller
         // Check trial expiry
         if ($tenant->status === 'trial' && $tenant->trial_ends_at && $tenant->trial_ends_at->isPast()) {
             $tenant->update(['status' => 'expired']);
+
             return response()->json(['message' => 'Your trial has expired. Please contact support to activate.'], 403);
         }
 
@@ -47,33 +48,33 @@ class AuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => config('jwt.ttl') * 60,
             'tenant' => [
-                'id'             => $tenant->id,
-                'name'           => $tenant->name,
-                'email'          => $tenant->email,
-                'plan'           => $tenant->plan,
-                'status'         => $tenant->status,
-                'trial_ends_at'  => $tenant->trial_ends_at,
+                'id' => $tenant->id,
+                'name' => $tenant->name,
+                'email' => $tenant->email,
+                'plan' => $tenant->plan,
+                'status' => $tenant->status,
+                'trial_ends_at' => $tenant->trial_ends_at,
                 'subscription_ends_at' => $tenant->subscription_ends_at,
             ],
         ]);
     }
 
-    public function me(Request $request)
+    public function profile(Request $request)
     {
         $tenant = Auth::guard('tenant')->user();
 
         return response()->json([
             'tenant' => [
-                'id'                   => $tenant->id,
-                'name'                 => $tenant->name,
-                'email'                => $tenant->email,
-                'plan'                 => $tenant->plan,
-                'status'               => $tenant->status,
-                'trial_ends_at'        => $tenant->trial_ends_at,
+                'id' => $tenant->id,
+                'name' => $tenant->name,
+                'email' => $tenant->email,
+                'plan' => $tenant->plan,
+                'status' => $tenant->status,
+                'trial_ends_at' => $tenant->trial_ends_at,
                 'subscription_ends_at' => $tenant->subscription_ends_at,
-                'phone'                => $tenant->phone,
-                'address'              => $tenant->address,
-                'city'                 => $tenant->city,
+                'phone' => $tenant->phone,
+                'address' => $tenant->address,
+                'city' => $tenant->city,
             ],
         ]);
     }
@@ -81,6 +82,7 @@ class AuthController extends Controller
     public function logout()
     {
         Auth::guard('tenant')->logout();
+
         return response()->json(['message' => 'Logged out successfully.']);
     }
 }

@@ -10,7 +10,7 @@ export default function Subscriptions() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        api.get('/superadmin/diagnostics', { params: { status: 'all', page: 1 } })
+        api.get('/admin/diagnostics', { params: { status: 'all', page: 1 } })
             .then(r => setTenants(r.data.data))
             .finally(() => setLoading(false));
     }, []);
@@ -45,7 +45,7 @@ export default function Subscriptions() {
                                     <li key={t.id} className="text-sm text-orange-700 flex items-center gap-2">
                                         <Clock size={13} />
                                         <span className="font-medium">{t.name}</span> — {daysLeft === 0 ? 'expires today' : `${daysLeft} day(s) left`}
-                                        <Link to={`/superadmin/diagnostics/${t.id}`} className="text-orange-600 hover:text-orange-900">
+                                        <Link to={`/admin/labs/${t.id}`} className="text-orange-600 hover:text-orange-900">
                                             <ExternalLink size={12} />
                                         </Link>
                                     </li>
@@ -101,7 +101,7 @@ export default function Subscriptions() {
                                         <td className="px-5 py-4"><Badge label={t.payment_status} variant={t.payment_status} /></td>
                                         <td className="px-5 py-4 text-right">
                                             <Link
-                                                to={`/superadmin/diagnostics/${t.id}`}
+                                                to={`/admin/labs/${t.id}`}
                                                 className="text-blue-600 hover:text-blue-800 text-xs font-medium flex items-center justify-end gap-1"
                                             >
                                                 Manage <ExternalLink size={12} />

@@ -7,12 +7,12 @@ import {
     XCircle, DollarSign, TrendingUp
 } from 'lucide-react';
 
-export default function SuperAdminDashboard() {
+export default function AdminDashboard() {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        api.get('/superadmin/stats')
+        api.get('/admin/stats')
             .then(r => setStats(r.data))
             .finally(() => setLoading(false));
     }, []);
@@ -29,12 +29,12 @@ export default function SuperAdminDashboard() {
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-                <p className="text-gray-500 mt-1">Overview of all diagnostic centers</p>
+                <p className="text-gray-500 mt-1">Overview of all labs</p>
             </div>
 
             {/* Stats grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-                <StatCard label="Total Centers" value={stats?.total ?? 0} icon={Building2} color="blue" />
+                <StatCard label="Total Labs" value={stats?.total ?? 0} icon={Building2} color="blue" />
                 <StatCard label="Active" value={stats?.active ?? 0} icon={CheckCircle} color="emerald" />
                 <StatCard label="On Trial" value={stats?.trial ?? 0} icon={Clock} color="indigo" />
                 <StatCard label="Suspended" value={stats?.suspended ?? 0} icon={AlertTriangle} color="orange" />
@@ -61,7 +61,7 @@ export default function SuperAdminDashboard() {
                     </div>
                 </div>
                 <p className="text-sm text-gray-400 mt-2">
-                    Across all subscription renewals from all diagnostic centers
+                    Across all subscription renewals from all labs
                 </p>
             </div>
         </div>

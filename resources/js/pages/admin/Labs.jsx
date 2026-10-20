@@ -24,7 +24,7 @@ const emptyForm = {
     plan: 'basic', monthly_fee: 500,
 };
 
-export default function Diagnostics() {
+export default function Labs() {
     const [data, setData] = useState({ data: [], current_page: 1, last_page: 1 });
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -37,7 +37,7 @@ export default function Diagnostics() {
 
     const fetchData = useCallback(() => {
         setLoading(true);
-        api.get('/superadmin/diagnostics', { params: { search, status, page } })
+        api.get('/admin/diagnostics', { params: { search, status, page } })
             .then(r => setData(r.data))
             .finally(() => setLoading(false));
     }, [search, status, page]);
@@ -48,8 +48,8 @@ export default function Diagnostics() {
         e.preventDefault();
         setSaving(true);
         try {
-            await api.post('/superadmin/diagnostics', form);
-            toast.success('Diagnostic center created! Database provisioned.');
+            await api.post('/admin/diagnostics', form);
+            toast.success('Lab created! Database provisioned.');
             setCreateOpen(false);
             setForm(emptyForm);
             fetchData();
@@ -67,8 +67,8 @@ export default function Diagnostics() {
 
     const handleDelete = async () => {
         try {
-            await api.delete(`/superadmin/diagnostics/${deleteId}`);
-            toast.success('Diagnostic center deleted.');
+            await api.delete(`/admin/diagnostics/${deleteId}`);
+            toast.success('Lab deleted.');
             setDeleteId(null);
             fetchData();
         } catch {
@@ -85,15 +85,15 @@ export default function Diagnostics() {
         <div className="space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Diagnostic Centers</h1>
-                    <p className="text-gray-500 text-sm mt-0.5">Manage all registered centers</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Labs</h1>
+                    <p className="text-gray-500 text-sm mt-0.5">Manage all registered labs</p>
                 </div>
                 <button
                     onClick={() => setCreateOpen(true)}
                     className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
                 >
                     <Plus size={18} />
-                    Add New Center
+                    Add New Lab
                 </button>
             </div>
 
@@ -137,7 +137,7 @@ export default function Diagnostics() {
                 ) : data.data.length === 0 ? (
                     <div className="flex flex-col items-center py-16 text-gray-400">
                         <Building2 size={40} className="mb-3 opacity-30" />
-                        <p className="font-medium">No diagnostic centers found</p>
+                        <p className="font-medium">No labs found</p>
                         <p className="text-sm mt-1">Create one to get started</p>
                     </div>
                 ) : (
@@ -145,7 +145,7 @@ export default function Diagnostics() {
                         <table className="w-full text-sm">
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-100">
-                                    <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Center</th>
+                                    <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Lab</th>
                                     <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Plan</th>
                                     <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Status</th>
                                     <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Subscription</th>
@@ -180,7 +180,7 @@ export default function Diagnostics() {
                                         <td className="px-5 py-4">
                                             <div className="flex items-center justify-end gap-2">
                                                 <Link
-                                                    to={`/superadmin/diagnostics/${t.id}`}
+                                                    to={`/admin/labs/${t.id}`}
                                                     className="p-2 rounded-lg text-blue-600 hover:bg-blue-50 transition"
                                                     title="View"
                                                 >
@@ -227,16 +227,16 @@ export default function Diagnostics() {
             </div>
 
             {/* Create Modal */}
-            <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Add Diagnostic Center" size="lg">
+            <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Add Lab" size="lg">
                 <form onSubmit={handleCreate} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="sm:col-span-2">
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Center Name *</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Lab Name *</label>
                             <input
                                 value={form.name}
                                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                                 required
-                                placeholder="e.g. City Diagnostic Center"
+                                placeholder="e.g. City Lab"
                                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                             />
                         </div>
@@ -357,16 +357,16 @@ export default function Diagnostics() {
                             className="flex-1 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium flex items-center justify-center gap-2 disabled:opacity-60 transition text-sm"
                         >
                             {saving ? <Spinner size="sm" /> : null}
-                            {saving ? 'Creating...' : 'Create Center'}
+                            {saving ? 'Creating...' : 'Create Lab'}
                         </button>
                     </div>
                 </form>
             </Modal>
 
             {/* Delete confirm */}
-            <Modal open={!!deleteId} onClose={() => setDeleteId(null)} title="Delete Diagnostic Center" size="sm">
+            <Modal open={!!deleteId} onClose={() => setDeleteId(null)} title="Delete Lab" size="sm">
                 <p className="text-gray-600 text-sm mb-5">
-                    This will permanently delete the diagnostic center and its entire database. This action cannot be undone.
+                    This will permanently delete the lab and its entire database. This action cannot be undone.
                 </p>
                 <div className="flex gap-3">
                     <button

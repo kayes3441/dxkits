@@ -9,7 +9,7 @@ import {
     Calendar, AlertTriangle, Clock
 } from 'lucide-react';
 
-export default function DiagnosticDashboard() {
+export default function LabDashboard() {
     const { tenant } = useTenant();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -36,7 +36,7 @@ export default function DiagnosticDashboard() {
         <div className="space-y-6">
             <div>
                 <h1 className="text-2xl font-bold text-gray-900">Welcome, {tenant?.name}</h1>
-                <p className="text-gray-500 mt-1">Here's your diagnostic center overview</p>
+                <p className="text-gray-500 mt-1">Here's your lab overview</p>
             </div>
 
             {/* Trial / Subscription banner */}
