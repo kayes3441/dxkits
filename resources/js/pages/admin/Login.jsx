@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
+import { useTheme } from '../../context/ThemeContext';
+import ThemeToggle from '../../components/ui/ThemeToggle';
 import api from '../../api/axios';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, ArrowLeft } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -8,6 +10,8 @@ import Spinner from '../../components/ui/Spinner';
 
 export default function AdminLogin() {
     const { login } = useAdmin();
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const navigate = useNavigate();
     const [form, setForm] = useState({ email: '', password: '' });
     const [showPwd, setShowPwd] = useState(false);
@@ -44,24 +48,24 @@ export default function AdminLogin() {
     };
 
     return (
-        <div className="min-h-screen flex overflow-hidden bg-[#0a0f1e]">
+        <div className={`min-h-screen flex overflow-hidden ${isDark ? 'bg-[#0a0f1e]' : 'bg-slate-50'}`}>
 
             {/* ── LEFT PANEL ── */}
             <div className="hidden lg:flex flex-col flex-1 relative overflow-hidden">
 
                 {/* Deep navy / indigo animated gradient background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#0a0f1e] via-[#0d1b4b] to-[#091233]" />
+                <div className={`absolute inset-0 bg-gradient-to-br ${isDark ? 'from-[#0a0f1e] via-[#0d1b4b] to-[#091233]' : 'from-blue-50 via-indigo-100 to-slate-100'}`} />
 
                 {/* Animated orbs */}
-                <div className="absolute top-[-80px] left-[-80px] w-[420px] h-[420px] rounded-full bg-blue-600/20 blur-[100px] animate-pulse" style={{ animationDuration: '4s' }} />
-                <div className="absolute bottom-[-100px] right-[-60px] w-[380px] h-[380px] rounded-full bg-indigo-500/20 blur-[120px] animate-pulse" style={{ animationDuration: '6s' }} />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-blue-900/30 blur-[80px] animate-pulse" style={{ animationDuration: '8s' }} />
+                <div className={`absolute top-[-80px] left-[-80px] w-[420px] h-[420px] rounded-full blur-[100px] animate-pulse ${isDark ? 'bg-blue-600/20' : 'bg-blue-300/30'}`} style={{ animationDuration: '4s' }} />
+                <div className={`absolute bottom-[-100px] right-[-60px] w-[380px] h-[380px] rounded-full blur-[120px] animate-pulse ${isDark ? 'bg-indigo-500/20' : 'bg-indigo-300/30'}`} style={{ animationDuration: '6s' }} />
+                <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full blur-[80px] animate-pulse ${isDark ? 'bg-blue-900/30' : 'bg-blue-200/40'}`} style={{ animationDuration: '8s' }} />
 
                 {/* Floating grid lines */}
-                <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+                <svg className={`absolute inset-0 w-full h-full opacity-[0.05] ${isDark ? 'text-white' : 'text-slate-900'}`} xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <pattern id="grid-admin" width="60" height="60" patternUnits="userSpaceOnUse">
-                            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" strokeWidth="1"/>
+                            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="currentColor" strokeWidth="1"/>
                         </pattern>
                     </defs>
                     <rect width="100%" height="100%" fill="url(#grid-admin)"/>
@@ -71,7 +75,7 @@ export default function AdminLogin() {
                 {[...Array(12)].map((_, i) => (
                     <div
                         key={i}
-                        className="absolute rounded-full bg-blue-400/30"
+                        className={`absolute rounded-full ${isDark ? 'bg-blue-400/30' : 'bg-blue-500/25'}`}
                         style={{
                             width: `${4 + (i % 4) * 3}px`,
                             height: `${4 + (i % 4) * 3}px`,
@@ -156,10 +160,10 @@ export default function AdminLogin() {
                         </svg>
                     </div>
 
-                    <h2 className="text-3xl font-bold text-white text-center mb-3">
+                    <h2 className={`text-3xl font-bold text-center mb-3 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                         Admin Portal
                     </h2>
-                    <p className="text-blue-300/80 text-center text-sm max-w-xs leading-relaxed">
+                    <p className={`text-center text-sm max-w-xs leading-relaxed ${isDark ? 'text-blue-300/80' : 'text-slate-600'}`}>
                         Manage all labs, subscriptions, and platform settings from one powerful dashboard.
                     </p>
 
@@ -170,9 +174,9 @@ export default function AdminLogin() {
                             { label: 'Control', value: '100%' },
                             { label: 'Uptime', value: '24/7' },
                         ].map(s => (
-                            <div key={s.label} className="px-4 py-2 rounded-2xl bg-white/5 border border-white/10 text-center">
-                                <div className="text-white font-bold text-lg">{s.value}</div>
-                                <div className="text-blue-300/70 text-xs">{s.label}</div>
+                            <div key={s.label} className={`px-4 py-2 rounded-2xl border text-center ${isDark ? 'bg-white/5 border-white/10' : 'bg-white/70 border-blue-200 shadow-sm'}`}>
+                                <div className={`font-bold text-lg ${isDark ? 'text-white' : 'text-slate-900'}`}>{s.value}</div>
+                                <div className={`text-xs ${isDark ? 'text-blue-300/70' : 'text-blue-700'}`}>{s.label}</div>
                             </div>
                         ))}
                     </div>
@@ -180,7 +184,8 @@ export default function AdminLogin() {
             </div>
 
             {/* ── RIGHT PANEL — LOGIN FORM ── */}
-            <div className="w-full lg:w-[460px] flex flex-col justify-center px-8 sm:px-14 py-12 bg-[#0d1117] relative">
+            <div className={`w-full lg:w-[460px] flex flex-col justify-center px-8 sm:px-14 py-12 relative ${isDark ? 'bg-[#0d1117]' : 'bg-white'}`}>
+                <ThemeToggle className="absolute right-6 top-6 z-20" />
 
                 {/* Top accent line */}
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-500 to-transparent" />
@@ -195,14 +200,14 @@ export default function AdminLogin() {
                             </svg>
                         </div>
                         <div>
-                            <p className="text-white font-bold text-base leading-none">LIS Platform</p>
-                            <p className="text-blue-400 text-xs mt-0.5">Administration</p>
+                            <p className={`font-bold text-base leading-none ${isDark ? 'text-white' : 'text-gray-900'}`}>LIS Platform</p>
+                            <p className={`text-xs mt-0.5 ${isDark ? 'text-blue-400' : 'text-blue-600'}`}>Administration</p>
                         </div>
                     </div>
-                    <h1 className="text-2xl font-bold text-white">
+                    <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                         {forgotMode ? 'Forgot password?' : 'Welcome back'}
                     </h1>
-                    <p className="text-slate-400 text-sm mt-1">
+                    <p className={`text-sm mt-1 ${isDark ? 'text-slate-400' : 'text-gray-500'}`}>
                         {forgotMode
                             ? 'Enter your email and we will send you a reset link'
                             : 'Sign in to your admin account'}
@@ -212,7 +217,7 @@ export default function AdminLogin() {
                 {/* Form */}
                 <form onSubmit={forgotMode ? handleForgotSubmit : handleSubmit} className="space-y-5">
                     <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">Email Address</label>
+                        <label className={`block text-sm font-medium mb-2 ${isDark ? 'text-slate-300' : 'text-gray-700'}`}>Email Address</label>
                         <div className="relative">
                             <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
                             <input
@@ -221,7 +226,11 @@ export default function AdminLogin() {
                                 onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
                                 placeholder="superadmin@lis.com"
                                 required
-                                className="w-full pl-11 pr-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition text-sm"
+                                className={`w-full pl-11 pr-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition text-sm ${
+                                    isDark
+                                        ? 'bg-white/5 border-white/10 text-white placeholder-slate-600'
+                                        : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
+                                }`}
                             />
                         </div>
                     </div>
@@ -229,7 +238,7 @@ export default function AdminLogin() {
                     {!forgotMode && (
                         <div>
                             <div className="flex items-center justify-between mb-2">
-                                <label className="block text-sm font-medium text-slate-300">Password</label>
+                                <label className={`block text-sm font-medium ${isDark ? 'text-slate-300' : 'text-gray-700'}`}>Password</label>
                                 <button
                                     type="button"
                                     onClick={() => setForgotMode(true)}
@@ -246,12 +255,16 @@ export default function AdminLogin() {
                                     onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
                                     placeholder="••••••••"
                                     required
-                                    className="w-full pl-11 pr-12 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition text-sm"
+                                    className={`w-full pl-11 pr-12 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition text-sm ${
+                                        isDark
+                                            ? 'bg-white/5 border-white/10 text-white placeholder-slate-600'
+                                            : 'bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400'
+                                    }`}
                                 />
                                 <button
                                     type="button"
                                     onClick={() => setShowPwd(p => !p)}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition"
+                                    className={`absolute right-4 top-1/2 -translate-y-1/2 transition ${isDark ? 'text-slate-500 hover:text-slate-300' : 'text-gray-400 hover:text-gray-600'}`}
                                 >
                                     {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
                                 </button>
@@ -287,7 +300,7 @@ export default function AdminLogin() {
                         <button
                             type="button"
                             onClick={() => setForgotMode(false)}
-                            className="w-full flex items-center justify-center gap-2 text-sm text-slate-400 hover:text-slate-200 transition"
+                            className={`w-full flex items-center justify-center gap-2 text-sm transition ${isDark ? 'text-slate-400 hover:text-slate-200' : 'text-gray-500 hover:text-gray-800'}`}
                         >
                             <ArrowLeft size={14} />
                             Back to sign in
@@ -296,7 +309,7 @@ export default function AdminLogin() {
                 </form>
 
                 {/* Bottom accent */}
-                <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+                <div className={`absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent to-transparent ${isDark ? 'via-white/10' : 'via-gray-200'}`} />
             </div>
 
             {/* Keyframe animation */}

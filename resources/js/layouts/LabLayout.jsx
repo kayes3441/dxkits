@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useNavigate, Outlet } from 'react-router-dom';
 import { useTenant } from '../context/TenantContext';
+import ThemeToggle from '../components/ui/ThemeToggle';
 import {
     LayoutDashboard, FlaskConical, LogOut, Menu, ChevronRight
 } from 'lucide-react';
@@ -103,6 +104,7 @@ export default function LabLayout() {
                         <Menu size={20} />
                     </button>
                     <div className="flex-1" />
+                    <ThemeToggle />
                     <div className="flex items-center gap-2">
                         <Badge label={tenant?.status} variant={tenant?.status} />
                         {tenant?.subscription_ends_at && (

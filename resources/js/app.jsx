@@ -1,10 +1,11 @@
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 
 // Contexts
 import { AdminProvider } from './context/AdminContext';
 import { TenantProvider } from './context/TenantContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 // Guards
 import { AdminRoute, TenantRoute } from './components/ProtectedRoute';
@@ -12,6 +13,9 @@ import { AdminRoute, TenantRoute } from './components/ProtectedRoute';
 // Layouts
 import AdminLayout from './layouts/AdminLayout';
 import LabLayout from './layouts/LabLayout';
+
+// Public pages
+import Home from './pages/Home';
 
 // Admin pages
 import AdminLogin from './pages/admin/Login';
@@ -28,6 +32,8 @@ import LabDashboard from './pages/lab/Dashboard';
 import '../css/app.css';
 
 function App() {
+    const { theme } = useTheme();
+
     return (
         <BrowserRouter>
             <AdminProvider>
@@ -39,12 +45,14 @@ function App() {
                             style: {
                                 borderRadius: '12px',
                                 boxShadow: '0 10px 40px rgba(0,0,0,0.12)',
+                                background: theme === 'dark' ? '#0f172a' : '#ffffff',
+                                color: theme === 'dark' ? '#f8fafc' : '#0f172a',
                             },
                         }}
                     />
                     <Routes>
-                        {/* Root redirect */}
-                        <Route path="/" element={<Navigate to="/admin/login" replace />} />
+                        {/* Home */}
+                        <Route path="/" element={<Home />} />
 
                         {/* Admin */}
                         <Route path="/admin/login" element={<AdminLogin />} />
@@ -82,4 +90,8 @@ function App() {
 }
 
 const root = createRoot(document.getElementById('app'));
-root.render(<App />);
+root.render(
+    <ThemeProvider>
+        <App />
+    </ThemeProvider>
+);

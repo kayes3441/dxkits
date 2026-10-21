@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTenant } from '../../context/TenantContext';
+import { useTheme } from '../../context/ThemeContext';
+import ThemeToggle from '../../components/ui/ThemeToggle';
 import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Spinner from '../../components/ui/Spinner';
@@ -73,6 +75,8 @@ function useOrbCanvas(canvasRef) {
 
 export default function LabLogin() {
     const { login } = useTenant();
+    const { theme } = useTheme();
+    const isDark = theme === 'dark';
     const navigate = useNavigate();
     const [form, setForm] = useState({ email: '', password: '' });
     const [showPwd, setShowPwd] = useState(false);
@@ -95,7 +99,7 @@ export default function LabLogin() {
     };
 
     return (
-        <div className="min-h-screen flex overflow-hidden" style={{ background: '#020f0a' }}>
+        <div className="min-h-screen flex overflow-hidden" style={{ background: isDark ? '#020f0a' : '#f8fafc' }}>
 
             {/* ══════════════════════════════════════
                 LEFT PANEL — animated illustration
@@ -104,14 +108,19 @@ export default function LabLogin() {
 
                 {/* Base gradient */}
                 <div className="absolute inset-0" style={{
-                    background: 'linear-gradient(135deg,#020f0a 0%,#03231a 40%,#021610 100%)'
+                    background: isDark
+                        ? 'linear-gradient(135deg,#020f0a 0%,#03231a 40%,#021610 100%)'
+                        : 'linear-gradient(135deg,#f0fdf4 0%,#dcfce7 40%,#ecfdf5 100%)'
                 }} />
 
                 {/* Canvas orb trails */}
                 <canvas
                     ref={canvasRef}
                     className="absolute inset-0 w-full h-full"
-                    style={{ mixBlendMode: 'screen' }}
+                    style={{
+                        mixBlendMode: isDark ? 'screen' : 'multiply',
+                        opacity: isDark ? 1 : 0.45,
+                    }}
                 />
 
                 {/* ── LIGHT BEAMS ── */}
@@ -132,11 +141,11 @@ export default function LabLogin() {
                 </div>
 
                 {/* ── HEX GRID ── */}
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ opacity: 0.04 }}>
+                <svg className={`absolute inset-0 w-full h-full pointer-events-none ${isDark ? 'text-white' : 'text-emerald-900'}`} style={{ opacity: isDark ? 0.04 : 0.07 }}>
                     <defs>
                         <pattern id="hex-d" x="0" y="0" width="56" height="100" patternUnits="userSpaceOnUse">
-                            <polygon points="28,2 54,16 54,44 28,58 2,44 2,16" fill="none" stroke="white" strokeWidth="1"/>
-                            <polygon points="28,58 54,72 54,100 28,114 2,100 2,72" fill="none" stroke="white" strokeWidth="1"/>
+                            <polygon points="28,2 54,16 54,44 28,58 2,44 2,16" fill="none" stroke="currentColor" strokeWidth="1"/>
+                            <polygon points="28,58 54,72 54,100 28,114 2,100 2,72" fill="none" stroke="currentColor" strokeWidth="1"/>
                         </pattern>
                     </defs>
                     <rect width="100%" height="100%" fill="url(#hex-d)"/>
@@ -308,10 +317,10 @@ export default function LabLogin() {
                         </svg>
                     </div>
 
-                    <h2 className="text-3xl font-bold text-white text-center mb-3 tracking-tight">
+                    <h2 className={`text-3xl font-bold text-center mb-3 tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
                         Lab
                     </h2>
-                    <p className="text-emerald-300/60 text-center text-sm max-w-xs leading-relaxed">
+                    <p className={`text-center text-sm max-w-xs leading-relaxed ${isDark ? 'text-emerald-300/60' : 'text-emerald-800/80'}`}>
                         Laboratory management — patients, tests, reports and billing in one place.
                     </p>
 
@@ -321,9 +330,9 @@ export default function LabLogin() {
                                 key={f}
                                 className="px-3 py-1.5 rounded-full text-xs font-medium border"
                                 style={{
-                                    background: 'rgba(16,185,129,0.07)',
-                                    borderColor: 'rgba(16,185,129,0.2)',
-                                    color: 'rgba(110,231,183,0.85)',
+                                    background: isDark ? 'rgba(16,185,129,0.07)' : 'rgba(16,185,129,0.1)',
+                                    borderColor: isDark ? 'rgba(16,185,129,0.2)' : 'rgba(16,185,129,0.3)',
+                                    color: isDark ? 'rgba(110,231,183,0.85)' : '#047857',
                                     animation: `pillGlow 2.5s ease-in-out infinite`,
                                     animationDelay: `${i * 0.4}s`,
                                 }}
@@ -339,7 +348,8 @@ export default function LabLogin() {
                 RIGHT PANEL — login form
             ══════════════════════════════════════ */}
             <div className="w-full lg:w-[460px] flex flex-col justify-center px-8 sm:px-14 py-12 relative"
-                style={{ background: '#030d09' }}>
+                style={{ background: isDark ? '#030d09' : '#ffffff', '--login-placeholder': isDark ? '#475569' : '#94a3b8' }}>
+                <ThemeToggle className="absolute right-6 top-6 z-20" />
 
                 {/* Animated top accent */}
                 <div className="absolute top-0 left-0 right-0 h-[2px] overflow-hidden">
@@ -361,18 +371,18 @@ export default function LabLogin() {
                             </svg>
                         </div>
                         <div>
-                            <p className="text-white font-bold text-base leading-none">LIS Platform</p>
-                            <p className="text-xs mt-0.5" style={{ color: '#34d399' }}>Lab</p>
+                            <p className={`font-bold text-base leading-none ${isDark ? 'text-white' : 'text-gray-900'}`}>LIS Platform</p>
+                            <p className="text-xs mt-0.5" style={{ color: isDark ? '#34d399' : '#059669' }}>Lab</p>
                         </div>
                     </div>
-                    <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-                    <p className="text-sm mt-1" style={{ color: '#475569' }}>Sign in to your lab</p>
+                    <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Welcome back</h1>
+                    <p className="text-sm mt-1" style={{ color: isDark ? '#475569' : '#64748b' }}>Sign in to your lab</p>
                 </div>
 
                 {/* Form */}
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
-                        <label className="block text-sm font-medium mb-2" style={{ color: '#cbd5e1' }}>Email Address</label>
+                        <label className="block text-sm font-medium mb-2" style={{ color: isDark ? '#cbd5e1' : '#334155' }}>Email Address</label>
                         <div className="relative">
                             <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#334155' }} />
                             <input
@@ -381,17 +391,17 @@ export default function LabLogin() {
                                 onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
                                 placeholder="lab@example.com"
                                 required
-                                className="w-full pl-11 pr-4 py-3 rounded-xl text-white text-sm transition-all input-field"
+                                className={`w-full pl-11 pr-4 py-3 rounded-xl text-sm transition-all input-field ${isDark ? 'text-white' : 'text-gray-900'}`}
                                 style={{
-                                    background: 'rgba(255,255,255,0.04)',
-                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    background: isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc',
+                                    border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #e2e8f0',
                                 }}
                             />
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium mb-2" style={{ color: '#cbd5e1' }}>Password</label>
+                        <label className="block text-sm font-medium mb-2" style={{ color: isDark ? '#cbd5e1' : '#334155' }}>Password</label>
                         <div className="relative">
                             <Lock size={16} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#334155' }} />
                             <input
@@ -400,10 +410,10 @@ export default function LabLogin() {
                                 onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
                                 placeholder="••••••••"
                                 required
-                                className="w-full pl-11 pr-12 py-3 rounded-xl text-white text-sm transition-all input-field"
+                                className={`w-full pl-11 pr-12 py-3 rounded-xl text-sm transition-all input-field ${isDark ? 'text-white' : 'text-gray-900'}`}
                                 style={{
-                                    background: 'rgba(255,255,255,0.04)',
-                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    background: isDark ? 'rgba(255,255,255,0.04)' : '#f8fafc',
+                                    border: isDark ? '1px solid rgba(255,255,255,0.08)' : '1px solid #e2e8f0',
                                 }}
                             />
                             <button
@@ -576,7 +586,7 @@ export default function LabLogin() {
                 }
 
                 /* ── input focus glow ── */
-                .input-field::placeholder { color: #1e3a2f; }
+                .input-field::placeholder { color: var(--login-placeholder, #475569); }
                 .input-field:focus {
                     outline: none;
                     border-color: rgba(16,185,129,0.4) !important;

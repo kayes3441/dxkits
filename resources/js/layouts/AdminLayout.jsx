@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, useNavigate, Outlet } from 'react-router-dom';
 import { useAdmin } from '../context/AdminContext';
+import ThemeToggle from '../components/ui/ThemeToggle';
 import {
     LayoutDashboard, Building2, CreditCard,
     LogOut, Shield, Menu, X, ChevronRight
@@ -109,6 +110,7 @@ export default function AdminLayout() {
                         <Menu size={20} />
                     </button>
                     <div className="flex-1" />
+                    <ThemeToggle />
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                         <span className="hidden sm:block">{admin?.name}</span>
                         <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
