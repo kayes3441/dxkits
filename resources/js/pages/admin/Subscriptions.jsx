@@ -77,7 +77,6 @@ export default function Subscriptions() {
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-200">
                                 <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Center</th>
-                                <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Plan</th>
                                 <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Status</th>
                                 <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Fee/Month</th>
                                 <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Expires</th>
@@ -107,7 +106,6 @@ export default function Subscriptions() {
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="px-5 py-4"><Badge label={t.plan} variant={t.plan} /></td>
                                         <td className="px-5 py-4"><Badge label={t.status} variant={t.status} /></td>
                                         <td className="px-5 py-4 font-medium text-gray-900">৳{Number(t.monthly_fee).toLocaleString()}</td>
                                         <td className="px-5 py-4">

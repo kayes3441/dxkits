@@ -22,7 +22,6 @@ import AdminLogin from './pages/admin/Login';
 import AdminDashboard from './pages/admin/Dashboard';
 import Labs from './pages/admin/Labs';
 import LabDetail from './pages/admin/LabDetail';
-import Subscriptions from './pages/admin/Subscriptions';
 import AdminProfile from './pages/admin/Profile';
 
 // Lab pages
@@ -68,7 +67,6 @@ function App() {
                             <Route path="dashboard" element={<AdminDashboard />} />
                             <Route path="labs" element={<Labs />} />
                             <Route path="labs/:id" element={<LabDetail />} />
-                            <Route path="subscriptions" element={<Subscriptions />} />
                             <Route path="profile" element={<AdminProfile />} />
                         </Route>
 

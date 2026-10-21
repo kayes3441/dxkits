@@ -2,16 +2,17 @@
 
 namespace App\Models;
 
-use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDatabase;
 use Stancl\Tenancy\Database\Concerns\HasDomains;
+use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 use Tymon\JWTAuth\Contracts\JWTSubject;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Tenant extends BaseTenant implements TenantWithDatabase, JWTSubject
+class Tenant extends BaseTenant implements JWTSubject, TenantWithDatabase
 {
-    use HasDatabase, HasDomains;
+    use HasDatabase, HasDomains, SoftDeletes;
 
     protected $fillable = [
         'id',
@@ -91,12 +92,17 @@ class Tenant extends BaseTenant implements TenantWithDatabase, JWTSubject
 
     public function getStatusBadgeAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'active' => 'Active',
             'suspended' => 'Suspended',
             'trial' => 'Trial',
             'expired' => 'Expired',
             default => 'Unknown',
         };
+    }
+
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
     }
 }

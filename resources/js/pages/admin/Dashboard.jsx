@@ -5,11 +5,10 @@ import StatCard from '../../components/ui/StatCard';
 import Spinner from '../../components/ui/Spinner';
 import {
     Building2, CheckCircle, Clock, AlertTriangle,
-    XCircle, DollarSign, TrendingUp, Activity, PieChart as PieIcon, BarChart3
+    XCircle, DollarSign, TrendingUp, Activity, PieChart as PieIcon
 } from 'lucide-react';
 import {
-    ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend,
-    BarChart, Bar, XAxis, YAxis, CartesianGrid
+    ResponsiveContainer, PieChart, Pie, Cell, Tooltip, Legend
 } from 'recharts';
 
 const STATUS_COLORS = {
@@ -25,7 +24,6 @@ export default function AdminDashboard() {
     const { theme } = useTheme();
     const isDark = theme === 'dark';
     const [stats, setStats] = useState(null);
-    const [planData, setPlanData] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -46,18 +44,7 @@ export default function AdminDashboard() {
                 }
                 if (cancelled) return;
 
-                const counts = all.reduce((acc, t) => {
-                    const plan = t.plan || 'basic';
-                    acc[plan] = (acc[plan] || 0) + 1;
-                    return acc;
-                }, {});
-                const planLabels = { basic: 'Basic', standard: 'Standard', premium: 'Premium' };
-                setPlanData(
-                    Object.entries(counts).map(([key, value]) => ({
-                        name: planLabels[key] || key,
-                        value,
-                    }))
-                );
+                // (plan distribution removed)
             } finally {
                 if (!cancelled) setLoading(false);
             }
@@ -159,33 +146,6 @@ export default function AdminDashboard() {
                     </div>
                 </div>
 
-                {/* Plan bar chart */}
-                <div className="bg-white rounded-xl p-5 border border-gray-200 shadow-sm">
-                    <div className="flex items-center gap-2 mb-4">
-                        <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                            <BarChart3 size={18} />
-                        </div>
-                        <div>
-                            <h2 className="font-semibold text-gray-900">Plans</h2>
-                            <p className="text-xs text-gray-500">Labs by subscription plan</p>
-                        </div>
-                    </div>
-                    <div className="h-72">
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={planData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} vertical={false} />
-                                <XAxis dataKey="name" tick={{ fill: axisColor, fontSize: 12 }} axisLine={false} tickLine={false} />
-                                <YAxis tick={{ fill: axisColor, fontSize: 12 }} axisLine={false} tickLine={false} allowDecimals={false} />
-                                <Tooltip contentStyle={tooltipStyle} cursor={{ fill: isDark ? '#1e293b' : '#f1f5f9' }} />
-                                <Bar dataKey="value" radius={[10, 10, 0, 0]}>
-                                    {planData.map((_, i) => (
-                                        <Cell key={i} fill={PLAN_COLORS[i % PLAN_COLORS.length]} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                    </div>
-                </div>
             </div>
 
             {/* Revenue summary */}

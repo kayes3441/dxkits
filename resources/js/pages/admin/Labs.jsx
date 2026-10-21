@@ -10,18 +10,12 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const PLANS = [
-    { value: 'basic', label: 'Basic', fee: 500 },
-    { value: 'standard', label: 'Standard', fee: 1000 },
-    { value: 'premium', label: 'Premium', fee: 2000 },
-];
-
 const STATUS_FILTERS = ['all', 'active', 'trial', 'suspended', 'expired'];
 
 const emptyForm = {
     name: '', email: '', password: '', phone: '',
-    address: '', city: '', state: '', contact_person: '',
-    plan: 'basic', monthly_fee: 500,
+    address: '', city: '', contact_person: '',
+    monthly_fee: 0,
 };
 
 export default function Labs() {
@@ -32,6 +26,8 @@ export default function Labs() {
     const [page, setPage] = useState(1);
     const [createOpen, setCreateOpen] = useState(false);
     const [form, setForm] = useState(emptyForm);
+    const [allModules, setAllModules] = useState([]);
+    const [selectedModules, setSelectedModules] = useState([]);
     const [saving, setSaving] = useState(false);
     const [deleteId, setDeleteId] = useState(null);
 
@@ -44,14 +40,19 @@ export default function Labs() {
 
     useEffect(() => { fetchData(); }, [fetchData]);
 
+    useEffect(() => {
+        api.get('/admin/modules').then(r => setAllModules(r.data)).catch(() => {});
+    }, []);
+
     const handleCreate = async (e) => {
         e.preventDefault();
         setSaving(true);
         try {
-            await api.post('/admin/diagnostics', form);
+            await api.post('/admin/diagnostics', { ...form, modules: selectedModules });
             toast.success('Lab created! Database provisioned.');
             setCreateOpen(false);
             setForm(emptyForm);
+            setSelectedModules([]);
             fetchData();
         } catch (err) {
             const errors = err.response?.data?.errors;
@@ -74,11 +75,6 @@ export default function Labs() {
         } catch {
             toast.error('Delete failed.');
         }
-    };
-
-    const setPlan = (plan) => {
-        const found = PLANS.find(p => p.value === plan);
-        setForm(f => ({ ...f, plan, monthly_fee: found?.fee ?? 0 }));
     };
 
     return (
@@ -154,7 +150,6 @@ export default function Labs() {
                             <thead>
                                 <tr className="bg-gray-50 border-b border-gray-200">
                                     <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Lab</th>
-                                    <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Plan</th>
                                     <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Status</th>
                                     <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Subscription</th>
                                     <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Fee/Month</th>
@@ -172,12 +167,9 @@ export default function Labs() {
                                                 <div>
                                                     <div className="font-semibold text-gray-900">{t.name}</div>
                                                     <div className="text-gray-400 text-xs mt-0.5">{t.email}</div>
-                                                    {t.city && <div className="text-gray-400 text-xs">{t.city}, {t.state}</div>}
+                                                    {t.city && <div className="text-gray-400 text-xs">{t.city}</div>}
                                                 </div>
                                             </div>
-                                        </td>
-                                        <td className="px-5 py-4">
-                                            <Badge label={t.plan} variant={t.plan} />
                                         </td>
                                         <td className="px-5 py-4">
                                             <Badge label={t.status} variant={t.status} />
@@ -304,15 +296,6 @@ export default function Labs() {
                                 className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
                             />
                         </div>
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">State / Division</label>
-                            <input
-                                value={form.state}
-                                onChange={e => setForm(f => ({ ...f, state: e.target.value }))}
-                                placeholder="Dhaka Division"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
-                            />
-                        </div>
                         <div className="sm:col-span-2">
                             <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
                             <input
@@ -324,38 +307,57 @@ export default function Labs() {
                         </div>
                     </div>
 
-                    {/* Plan selection */}
-                    <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Subscription Plan *</label>
-                        <div className="grid grid-cols-3 gap-3">
-                            {PLANS.map(p => (
-                                <button
-                                    key={p.value}
-                                    type="button"
-                                    onClick={() => setPlan(p.value)}
-                                    className={`p-3 rounded-xl border-2 text-center transition ${
-                                        form.plan === p.value
-                                            ? 'border-blue-500 bg-blue-50 shadow-sm'
-                                            : 'border-gray-200 hover:border-gray-300 bg-white'
-                                    }`}
-                                >
-                                    <div className="font-semibold text-sm">{p.label}</div>
-                                    <div className="text-xs text-gray-500 mt-0.5">৳{p.fee}/mo</div>
-                                </button>
-                            ))}
+                    {/* Module selection */}
+                    {allModules.length > 0 && (
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Modules</label>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                {allModules.filter(m => m.is_active).map(m => {
+                                    const checked = selectedModules.includes(m.slug);
+                                    return (
+                                        <label
+                                            key={m.slug}
+                                            className={`flex items-center gap-2 p-2.5 rounded-lg border cursor-pointer transition-colors text-sm ${
+                                                checked ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
+                                            }`}
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={checked}
+                                                onChange={() => {
+                                                    setSelectedModules(prev => {
+                                                        const next = prev.includes(m.slug)
+                                                            ? prev.filter(x => x !== m.slug)
+                                                            : [...prev, m.slug];
+                                                        const total = allModules
+                                                            .filter(x => next.includes(x.slug))
+                                                            .reduce((s, x) => s + Number(x.price), 0);
+                                                        setForm(f => ({ ...f, monthly_fee: total }));
+                                                        return next;
+                                                    });
+                                                }}
+                                                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                            />
+                                            <span className="flex-1 text-gray-800">{m.name}</span>
+                                            <span className="text-xs font-medium text-gray-500">৳{Number(m.price).toLocaleString()}</span>
+                                        </label>
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Fee (৳) *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Fee (৳)</label>
                         <input
                             type="number"
                             value={form.monthly_fee}
-                            onChange={e => setForm(f => ({ ...f, monthly_fee: e.target.value }))}
-                            required
+                            readOnly
                             min="0"
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
+                            step="0.01"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-100 text-gray-600 text-sm cursor-not-allowed"
                         />
+                        <p className="text-xs text-gray-500 mt-1">Auto-calculated from selected modules.</p>
                     </div>
 
                     <div className="flex gap-3 pt-2">

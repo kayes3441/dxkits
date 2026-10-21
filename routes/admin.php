@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DiagnosticController;
+use App\Http\Controllers\Admin\InvoiceController;
+use App\Http\Controllers\Admin\ModuleController;
 use App\Http\Controllers\Admin\PasswordResetController;
 use App\Http\Controllers\Admin\SubscriptionController;
 use Illuminate\Support\Facades\Route;
@@ -30,13 +32,25 @@ Route::prefix('admin')->group(function () {
         // Diagnostic centers (tenants)
         Route::apiResource('diagnostics', DiagnosticController::class);
 
+        // Modules (config-based)
+        Route::get('modules', [ModuleController::class, 'index']);
+        Route::get('diagnostics/{id}/modules', [ModuleController::class, 'tenantModules']);
+        Route::put('diagnostics/{id}/modules', [ModuleController::class, 'syncTenantModules']);
+
         // Subscription management
         Route::prefix('diagnostics/{id}/subscription')->group(function () {
             Route::post('renew', [SubscriptionController::class, 'renew']);
             Route::post('suspend', [SubscriptionController::class, 'suspend']);
             Route::post('activate', [SubscriptionController::class, 'activate']);
-            Route::post('change-plan', [SubscriptionController::class, 'changePlan']);
             Route::get('logs', [SubscriptionController::class, 'logs']);
         });
+
+        // Payment status
+        Route::put('diagnostics/{id}/payment-status', [SubscriptionController::class, 'updatePaymentStatus']);
+
+        // Invoices
+        Route::get('diagnostics/{id}/invoices', [InvoiceController::class, 'index']);
+        Route::post('diagnostics/{id}/invoices', [InvoiceController::class, 'store']);
+        Route::put('invoices/{id}', [InvoiceController::class, 'update']);
     });
 });

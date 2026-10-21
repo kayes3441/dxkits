@@ -3,7 +3,7 @@ import { NavLink, useNavigate, Outlet } from 'react-router-dom';
 import { useAdmin } from '../context/AdminContext';
 import ThemeToggle from '../components/ui/ThemeToggle';
 import {
-    LayoutDashboard, Building2, CreditCard,
+    LayoutDashboard, Building2,
     LogOut, Shield, Menu, X, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -11,7 +11,6 @@ import toast from 'react-hot-toast';
 const navItems = [
     { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { to: '/admin/labs', label: 'Labs', icon: Building2 },
-    { to: '/admin/subscriptions', label: 'Subscriptions', icon: CreditCard },
 ];
 
 export default function AdminLayout() {

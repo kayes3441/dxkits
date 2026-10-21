@@ -6,7 +6,6 @@ import {
     LayoutDashboard, FlaskConical, LogOut, Menu, ChevronRight
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import Badge from '../components/ui/Badge';
 
 const navItems = [
     { to: '/lab/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -33,9 +32,6 @@ export default function LabLayout() {
                     </div>
                     <div className="min-w-0">
                         <p className="font-bold text-sm truncate">{tenant?.name}</p>
-                        <div className="mt-0.5">
-                            <Badge label={tenant?.plan} variant={tenant?.plan} />
-                        </div>
                     </div>
                 </div>
             </div>

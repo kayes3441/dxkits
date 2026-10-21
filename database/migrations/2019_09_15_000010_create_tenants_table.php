@@ -18,11 +18,9 @@ class CreateTenantsTable extends Migration
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->string('city')->nullable();
-            $table->string('state')->nullable();
             $table->string('logo')->nullable();
             $table->string('contact_person')->nullable();
 
-            $table->enum('plan', ['basic', 'standard', 'premium'])->default('basic');
             $table->enum('status', ['active', 'suspended', 'trial', 'expired'])->default('trial');
             $table->date('trial_ends_at')->nullable();
             $table->date('subscription_starts_at')->nullable();
@@ -31,6 +29,7 @@ class CreateTenantsTable extends Migration
             $table->string('payment_status')->default('pending');
 
             $table->timestamps();
+            $table->softDeletes();
             $table->json('data')->nullable();
         });
     }

@@ -11,8 +11,7 @@ return new class extends Migration
         Schema::create('subscription_logs', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('tenant_id');
-            $table->string('action'); // renewed, suspended, upgraded, downgraded
-            $table->string('plan');
+            $table->string('status'); // renewed, suspended, activated
             $table->decimal('amount', 10, 2);
             $table->date('period_start');
             $table->date('period_end');
