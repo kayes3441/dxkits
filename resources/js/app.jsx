@@ -23,6 +23,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import Labs from './pages/admin/Labs';
 import LabDetail from './pages/admin/LabDetail';
 import Subscriptions from './pages/admin/Subscriptions';
+import AdminProfile from './pages/admin/Profile';
 
 // Lab pages
 import LabLogin from './pages/lab/Login';
@@ -68,6 +69,7 @@ function App() {
                             <Route path="labs" element={<Labs />} />
                             <Route path="labs/:id" element={<LabDetail />} />
                             <Route path="subscriptions" element={<Subscriptions />} />
+                            <Route path="profile" element={<AdminProfile />} />
                         </Route>
 
                         {/* Lab */}

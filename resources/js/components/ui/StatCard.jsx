@@ -1,23 +1,28 @@
 export default function StatCard({ label, value, icon: Icon, color = 'blue', trend }) {
     const colors = {
-        blue:   'from-blue-500 to-blue-600',
-        emerald:'from-emerald-500 to-emerald-600',
-        purple: 'from-purple-500 to-purple-600',
-        orange: 'from-orange-500 to-orange-600',
-        red:    'from-red-500 to-red-600',
-        indigo: 'from-indigo-500 to-indigo-600',
+        blue:   { bg: 'bg-blue-50', text: 'text-blue-600' },
+        emerald:{ bg: 'bg-emerald-50', text: 'text-emerald-600' },
+        purple: { bg: 'bg-purple-50', text: 'text-purple-600' },
+        orange: { bg: 'bg-orange-50', text: 'text-orange-600' },
+        red:    { bg: 'bg-red-50', text: 'text-red-600' },
+        indigo: { bg: 'bg-indigo-50', text: 'text-indigo-600' },
     };
+    const c = colors[color] || colors.blue;
 
     return (
-        <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
-            <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors[color]} flex items-center justify-center flex-shrink-0`}>
-                <Icon size={22} className="text-white" />
+        <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm hover:shadow-md hover:border-gray-300 transition-all duration-200">
+            <div className="flex items-center justify-between gap-3">
+                <div className={`w-9 h-9 rounded-lg ${c.bg} ${c.text} flex items-center justify-center`}>
+                    <Icon size={17} />
+                </div>
+                {trend && (
+                    <span className="text-xs font-medium text-emerald-600">
+                        {trend}
+                    </span>
+                )}
             </div>
-            <div>
-                <p className="text-sm text-gray-500 font-medium">{label}</p>
-                <p className="text-2xl font-bold text-gray-900 mt-0.5">{value}</p>
-                {trend && <p className="text-xs text-gray-400 mt-0.5">{trend}</p>}
-            </div>
+            <p className="text-2xl font-semibold text-gray-900 mt-3 tracking-tight">{value}</p>
+            <p className="text-xs text-gray-500 font-medium mt-0.5">{label}</p>
         </div>
     );
 }

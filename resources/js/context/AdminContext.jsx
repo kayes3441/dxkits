@@ -37,7 +37,7 @@ export function AdminProvider({ children }) {
     };
 
     return (
-        <AdminContext.Provider value={{ admin, loading, login, logout }}>
+        <AdminContext.Provider value={{ admin, loading, login, logout, setAdmin }}>
             {children}
         </AdminContext.Provider>
     );

@@ -6,7 +6,7 @@ import Modal from '../../components/ui/Modal';
 import Spinner from '../../components/ui/Spinner';
 import {
     Plus, Search, Eye, Trash2, Building2,
-    ChevronLeft, ChevronRight, Filter
+    ChevronLeft, ChevronRight, Filter, Users
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -25,7 +25,7 @@ const emptyForm = {
 };
 
 export default function Labs() {
-    const [data, setData] = useState({ data: [], current_page: 1, last_page: 1 });
+    const [data, setData] = useState({ data: [], current_page: 1, last_page: 1, total: 0 });
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState('all');
@@ -82,15 +82,19 @@ export default function Labs() {
     };
 
     return (
-        <div className="space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="space-y-6">
+            {/* Page header */}
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-bold text-gray-900">Labs</h1>
-                    <p className="text-gray-500 text-sm mt-0.5">Manage all registered labs</p>
+                    <p className="text-sm font-medium text-blue-600 flex items-center gap-1.5">
+                        <Building2 size={14} /> Lab management
+                    </p>
+                    <h1 className="text-3xl font-bold text-gray-900 mt-1 tracking-tight">Labs</h1>
+                    <p className="text-gray-500 mt-1.5">Manage all registered diagnostic centers.</p>
                 </div>
                 <button
                     onClick={() => setCreateOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 transition-all"
+                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-xl font-medium shadow-sm hover:bg-blue-700 transition-colors"
                 >
                     <Plus size={18} />
                     Add New Lab
@@ -98,53 +102,57 @@ export default function Labs() {
             </div>
 
             {/* Filters */}
-            <div className="flex flex-col sm:flex-row gap-3">
-                <div className="relative flex-1">
-                    <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input
-                        value={search}
-                        onChange={e => { setSearch(e.target.value); setPage(1); }}
-                        placeholder="Search by name, email, city..."
-                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                </div>
-                <div className="flex items-center gap-2">
-                    <Filter size={16} className="text-gray-400" />
-                    <div className="flex gap-1 bg-white border border-gray-200 rounded-xl p-1">
-                        {STATUS_FILTERS.map(s => (
-                            <button
-                                key={s}
-                                onClick={() => { setStatus(s); setPage(1); }}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition ${
-                                    status === s
-                                        ? 'bg-blue-600 text-white shadow'
-                                        : 'text-gray-600 hover:bg-gray-100'
-                                }`}
-                            >
-                                {s}
-                            </button>
-                        ))}
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 sm:p-5 ">
+                <div className="flex flex-col lg:flex-row gap-3">
+                    <div className="relative flex-1">
+                        <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                        <input
+                            value={search}
+                            onChange={e => { setSearch(e.target.value); setPage(1); }}
+                            placeholder="Search by name, email, city..."
+                            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition"
+                        />
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <Filter size={16} className="text-gray-400" />
+                        <div className="flex gap-1 bg-gray-100 rounded-xl p-1 flex-wrap">
+                            {STATUS_FILTERS.map(s => (
+                                <button
+                                    key={s}
+                                    onClick={() => { setStatus(s); setPage(1); }}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition ${
+                                        status === s
+                                            ? 'bg-white text-blue-600 shadow-sm'
+                                            : 'text-gray-600 hover:text-gray-900'
+                                    }`}
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* Table */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden ">
                 {loading ? (
                     <div className="flex justify-center py-16">
                         <Spinner size="lg" className="text-blue-500" />
                     </div>
                 ) : data.data.length === 0 ? (
                     <div className="flex flex-col items-center py-16 text-gray-400">
-                        <Building2 size={40} className="mb-3 opacity-30" />
-                        <p className="font-medium">No labs found</p>
+                        <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-4">
+                            <Building2 size={28} className="opacity-40" />
+                        </div>
+                        <p className="font-medium text-gray-600">No labs found</p>
                         <p className="text-sm mt-1">Create one to get started</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="bg-gray-50 border-b border-gray-100">
+                                <tr className="bg-gray-50 border-b border-gray-200">
                                     <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Lab</th>
                                     <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Plan</th>
                                     <th className="text-left px-5 py-3.5 font-semibold text-gray-600">Status</th>
@@ -155,11 +163,18 @@ export default function Labs() {
                             </thead>
                             <tbody>
                                 {data.data.map((t) => (
-                                    <tr key={t.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition">
+                                    <tr key={t.id} className="border-b border-gray-50 hover:bg-blue-50 transition-colors">
                                         <td className="px-5 py-4">
-                                            <div className="font-semibold text-gray-900">{t.name}</div>
-                                            <div className="text-gray-400 text-xs mt-0.5">{t.email}</div>
-                                            {t.city && <div className="text-gray-400 text-xs">{t.city}, {t.state}</div>}
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white text-sm font-bold shadow-sm flex-shrink-0">
+                                                    {t.name?.charAt(0)?.toUpperCase() || 'L'}
+                                                </div>
+                                                <div>
+                                                    <div className="font-semibold text-gray-900">{t.name}</div>
+                                                    <div className="text-gray-400 text-xs mt-0.5">{t.email}</div>
+                                                    {t.city && <div className="text-gray-400 text-xs">{t.city}, {t.state}</div>}
+                                                </div>
+                                            </div>
                                         </td>
                                         <td className="px-5 py-4">
                                             <Badge label={t.plan} variant={t.plan} />
@@ -174,11 +189,11 @@ export default function Labs() {
                                                 ? `Trial ends ${new Date(t.trial_ends_at).toLocaleDateString()}`
                                                 : '—'}
                                         </td>
-                                        <td className="px-5 py-4 font-medium text-gray-900">
+                                        <td className="px-5 py-4 font-semibold text-gray-900">
                                             ৳{Number(t.monthly_fee).toLocaleString()}
                                         </td>
                                         <td className="px-5 py-4">
-                                            <div className="flex items-center justify-end gap-2">
+                                            <div className="flex items-center justify-end gap-1.5">
                                                 <Link
                                                     to={`/admin/labs/${t.id}`}
                                                     className="p-2 rounded-lg text-blue-600 hover:bg-blue-50 transition"
@@ -204,20 +219,20 @@ export default function Labs() {
 
                 {/* Pagination */}
                 {data.last_page > 1 && (
-                    <div className="flex items-center justify-between px-5 py-3 border-t border-gray-100">
+                    <div className="flex items-center justify-between px-5 py-3 border-t border-gray-200 bg-gray-50">
                         <p className="text-sm text-gray-500">Page {data.current_page} of {data.last_page}</p>
                         <div className="flex gap-2">
                             <button
                                 onClick={() => setPage(p => Math.max(1, p - 1))}
                                 disabled={page === 1}
-                                className="p-2 rounded-lg border text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition"
+                                className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-white disabled:opacity-40 transition"
                             >
                                 <ChevronLeft size={16} />
                             </button>
                             <button
                                 onClick={() => setPage(p => Math.min(data.last_page, p + 1))}
                                 disabled={page === data.last_page}
-                                className="p-2 rounded-lg border text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition"
+                                className="p-2 rounded-lg border border-gray-200 text-gray-600 hover:bg-white disabled:opacity-40 transition"
                             >
                                 <ChevronRight size={16} />
                             </button>
@@ -227,7 +242,7 @@ export default function Labs() {
             </div>
 
             {/* Create Modal */}
-            <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Add Lab" size="lg">
+            <Modal open={createOpen} onClose={() => setCreateOpen(false)} title="Add New Lab" size="lg">
                 <form onSubmit={handleCreate} className="space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="sm:col-span-2">
@@ -237,7 +252,7 @@ export default function Labs() {
                                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                                 required
                                 placeholder="e.g. City Lab"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
                             />
                         </div>
                         <div>
@@ -248,7 +263,7 @@ export default function Labs() {
                                 onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
                                 required
                                 placeholder="center@email.com"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
                             />
                         </div>
                         <div>
@@ -259,7 +274,7 @@ export default function Labs() {
                                 onChange={e => setForm(f => ({ ...f, password: e.target.value }))}
                                 required
                                 placeholder="Min 8 characters"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
                             />
                         </div>
                         <div>
@@ -268,7 +283,7 @@ export default function Labs() {
                                 value={form.contact_person}
                                 onChange={e => setForm(f => ({ ...f, contact_person: e.target.value }))}
                                 placeholder="Dr. John Doe"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
                             />
                         </div>
                         <div>
@@ -277,7 +292,7 @@ export default function Labs() {
                                 value={form.phone}
                                 onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
                                 placeholder="+880 1XXX-XXXXXX"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
                             />
                         </div>
                         <div>
@@ -286,7 +301,7 @@ export default function Labs() {
                                 value={form.city}
                                 onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
                                 placeholder="Dhaka"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
                             />
                         </div>
                         <div>
@@ -295,7 +310,7 @@ export default function Labs() {
                                 value={form.state}
                                 onChange={e => setForm(f => ({ ...f, state: e.target.value }))}
                                 placeholder="Dhaka Division"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
                             />
                         </div>
                         <div className="sm:col-span-2">
@@ -304,7 +319,7 @@ export default function Labs() {
                                 value={form.address}
                                 onChange={e => setForm(f => ({ ...f, address: e.target.value }))}
                                 placeholder="123 Main Street"
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
                             />
                         </div>
                     </div>
@@ -320,8 +335,8 @@ export default function Labs() {
                                     onClick={() => setPlan(p.value)}
                                     className={`p-3 rounded-xl border-2 text-center transition ${
                                         form.plan === p.value
-                                            ? 'border-blue-500 bg-blue-50'
-                                            : 'border-gray-200 hover:border-gray-300'
+                                            ? 'border-blue-500 bg-blue-50 shadow-sm'
+                                            : 'border-gray-200 hover:border-gray-300 bg-white'
                                     }`}
                                 >
                                     <div className="font-semibold text-sm">{p.label}</div>
@@ -339,7 +354,7 @@ export default function Labs() {
                             onChange={e => setForm(f => ({ ...f, monthly_fee: e.target.value }))}
                             required
                             min="0"
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white text-sm transition"
                         />
                     </div>
 
@@ -354,7 +369,7 @@ export default function Labs() {
                         <button
                             type="submit"
                             disabled={saving}
-                            className="flex-1 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-medium flex items-center justify-center gap-2 disabled:opacity-60 transition text-sm"
+                            className="flex-1 py-2.5 bg-blue-600 text-white rounded-xl font-medium flex items-center justify-center gap-2 disabled:opacity-60 hover:bg-blue-700 transition-colors text-sm"
                         >
                             {saving ? <Spinner size="sm" /> : null}
                             {saving ? 'Creating...' : 'Create Lab'}
@@ -377,7 +392,7 @@ export default function Labs() {
                     </button>
                     <button
                         onClick={handleDelete}
-                        className="flex-1 py-2.5 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition text-sm"
+                        className="flex-1 py-2.5 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition text-sm shadow-lg shadow-red-500/20"
                     >
                         Delete Forever
                     </button>

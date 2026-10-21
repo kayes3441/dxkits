@@ -216,6 +216,26 @@ html.dark .text-yellow-700 {
     color: #fde047;
 }
 
+/* ── Attractive admin cards ── */
+.card-accent {
+    position: relative;
+    overflow: hidden;
+}
+.card-accent::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%);
+    opacity: 0.85;
+    z-index: 1;
+}
+.card-accent:hover {
+    box-shadow: 0 14px 28px -10px rgba(15, 23, 42, 0.18);
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
     width: 6px;

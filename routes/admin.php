@@ -1,9 +1,10 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AuthController as AdminAuthController;
 use App\Http\Controllers\Admin\DiagnosticController;
+use App\Http\Controllers\Admin\PasswordResetController;
 use App\Http\Controllers\Admin\SubscriptionController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,12 +14,13 @@ use App\Http\Controllers\Admin\SubscriptionController;
 Route::prefix('admin')->group(function () {
     // Public
     Route::post('login', [AdminAuthController::class, 'login']);
-    Route::post('forgot-password', [\App\Http\Controllers\Admin\PasswordResetController::class, 'forgotPassword']);
-    Route::post('reset-password', [\App\Http\Controllers\Admin\PasswordResetController::class, 'resetPassword']);
+    Route::post('forgot-password', [PasswordResetController::class, 'forgotPassword']);
+    Route::post('reset-password', [PasswordResetController::class, 'resetPassword']);
 
     // Protected
     Route::middleware('auth:admin')->group(function () {
         Route::get('me', [AdminAuthController::class, 'me']);
+        Route::put('profile', [AdminAuthController::class, 'update']);
         Route::post('logout', [AdminAuthController::class, 'logout']);
         Route::post('refresh', [AdminAuthController::class, 'refresh']);
 
