@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Auth\Authenticatable as AuthenticatableTrait;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Stancl\Tenancy\Contracts\TenantWithDatabase;
@@ -10,9 +12,9 @@ use Stancl\Tenancy\Database\Concerns\HasDomains;
 use Stancl\Tenancy\Database\Models\Tenant as BaseTenant;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class Tenant extends BaseTenant implements JWTSubject, TenantWithDatabase
+class Tenant extends BaseTenant implements AuthenticatableContract, JWTSubject, TenantWithDatabase
 {
-    use HasDatabase, HasDomains, SoftDeletes;
+    use AuthenticatableTrait, HasDatabase, HasDomains, SoftDeletes;
 
     protected $fillable = [
         'id',
@@ -22,10 +24,8 @@ class Tenant extends BaseTenant implements JWTSubject, TenantWithDatabase
         'phone',
         'address',
         'city',
-        'state',
         'logo',
         'contact_person',
-        'plan',
         'status',
         'trial_ends_at',
         'subscription_starts_at',
@@ -57,16 +57,17 @@ class Tenant extends BaseTenant implements JWTSubject, TenantWithDatabase
             'phone',
             'address',
             'city',
-            'state',
             'logo',
             'contact_person',
-            'plan',
             'status',
             'trial_ends_at',
             'subscription_starts_at',
             'subscription_ends_at',
             'monthly_fee',
             'payment_status',
+            'created_at',
+            'updated_at',
+            'deleted_at',
         ];
     }
 

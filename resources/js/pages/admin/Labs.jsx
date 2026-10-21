@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
-const STATUS_FILTERS = ['all', 'active', 'trial', 'suspended', 'expired'];
+const STATUS_FILTERS = ['all', 'pending', 'active', 'trial', 'suspended', 'expired'];
 
 const emptyForm = {
     name: '', email: '', password: '', phone: '',

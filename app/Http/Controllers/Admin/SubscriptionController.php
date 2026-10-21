@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Invoice;
 use App\Models\SubscriptionLog;
 use App\Models\Tenant;
 use Carbon\Carbon;
@@ -28,24 +29,40 @@ class SubscriptionController extends Controller
 
         $end = $start->copy()->addMonths($request->months);
 
+        $total = $request->amount * $request->months;
+
         $tenant->update([
             'status' => 'active',
             'monthly_fee' => $request->amount,
             'subscription_starts_at' => $start,
             'subscription_ends_at' => $end,
-            'payment_status' => 'paid',
+            'payment_status' => 'pending',
+        ]);
+
+        // A subscription always generates its invoice for the period.
+        $invoice = Invoice::create([
+            'tenant_id' => $tenant->id,
+            'amount' => $total,
+            'status' => 'unpaid',
+            'issued_at' => $start->toDateString(),
+            'due_at' => $end->toDateString(),
+            'notes' => $request->notes ?? "Subscription for {$request->months} month(s)",
         ]);
 
         SubscriptionLog::create([
             'tenant_id' => $tenant->id,
             'action' => 'renewed',
-            'amount' => $request->amount * $request->months,
+            'amount' => $total,
             'period_start' => $start,
             'period_end' => $end,
             'notes' => $request->notes ?? "Renewed for {$request->months} month(s)",
         ]);
 
-        return response()->json(['message' => 'Subscription renewed successfully.', 'tenant' => $tenant->fresh()]);
+        return response()->json([
+            'message' => 'Subscription renewed and invoice generated.',
+            'tenant' => $tenant->fresh(),
+            'invoice' => $invoice,
+        ]);
     }
 
     public function suspend(Request $request, string $id)

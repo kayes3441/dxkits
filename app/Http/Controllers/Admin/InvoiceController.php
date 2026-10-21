@@ -16,30 +16,6 @@ class InvoiceController extends Controller
         return response()->json($tenant->invoices()->latest()->get());
     }
 
-    public function store(Request $request, string $id)
-    {
-        $tenant = Tenant::findOrFail($id);
-
-        $request->validate([
-            'amount' => 'nullable|numeric|min:0',
-            'due_at' => 'nullable|date',
-            'notes' => 'nullable|string|max:500',
-        ]);
-
-        $amount = $request->filled('amount') ? $request->amount : $tenant->monthly_fee;
-
-        $invoice = Invoice::create([
-            'tenant_id' => $tenant->id,
-            'amount' => $amount,
-            'status' => 'unpaid',
-            'issued_at' => now()->toDateString(),
-            'due_at' => $request->due_at ?? now()->addDays(15)->toDateString(),
-            'notes' => $request->notes,
-        ]);
-
-        return response()->json(['message' => 'Invoice generated.', 'invoice' => $invoice], 201);
-    }
-
     public function update(Request $request, string $id)
     {
         $invoice = Invoice::findOrFail($id);
@@ -49,6 +25,17 @@ class InvoiceController extends Controller
         ]);
 
         $invoice->update(['status' => $request->status]);
+
+        // Keep the lab payment status in sync with its latest invoice.
+        $tenant = $invoice->tenant;
+        if ($tenant) {
+            $paymentStatus = match ($invoice->status) {
+                'paid' => 'paid',
+                'overdue' => 'overdue',
+                default => 'pending',
+            };
+            $tenant->update(['payment_status' => $paymentStatus]);
+        }
 
         return response()->json(['message' => 'Invoice updated.', 'invoice' => $invoice->fresh()]);
     }

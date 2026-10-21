@@ -6,7 +6,7 @@ import Badge from '../../components/ui/Badge';
 import Spinner from '../../components/ui/Spinner';
 import {
     Users, FlaskConical, FileText, CheckCircle,
-    Calendar, AlertTriangle, Clock
+    Calendar, AlertTriangle, Clock, Package
 } from 'lucide-react';
 
 export default function LabDashboard() {
@@ -81,11 +81,17 @@ export default function LabDashboard() {
                     <div className="space-y-3 text-sm">
                         <div className="flex justify-between items-center py-2 border-b border-gray-50">
                             <span className="text-gray-500">Status</span>
-                            <Badge label={tenant?.status} variant={tenant?.status} />
+                            <Badge
+                                label={tenant?.status ? tenant.status.charAt(0).toUpperCase() + tenant.status.slice(1) : '—'}
+                                variant={tenant?.status}
+                            />
                         </div>
                         <div className="flex justify-between items-center py-2 border-b border-gray-50">
-                            <span className="text-gray-500">Plan</span>
-                            <Badge label={tenant?.plan} variant={tenant?.plan} />
+                            <span className="text-gray-500">Payment</span>
+                            <Badge
+                                label={tenant?.payment_status ? tenant.payment_status.charAt(0).toUpperCase() + tenant.payment_status.slice(1) : '—'}
+                                variant={tenant?.payment_status}
+                            />
                         </div>
                         {tenant?.trial_ends_at && tenant?.status === 'trial' && (
                             <div className="flex justify-between items-center py-2 border-b border-gray-50">
@@ -102,16 +108,25 @@ export default function LabDashboard() {
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-teal-500 to-emerald-600 rounded-2xl p-6 text-white">
-                    <h2 className="font-semibold mb-3">More features coming</h2>
-                    <p className="text-teal-100 text-sm leading-relaxed">
-                        Patient registration, test management, report generation, billing, and more features will be added as you share your requirements.
-                    </p>
-                    <div className="mt-4 flex gap-2">
-                        <div className="px-3 py-1.5 bg-white/20 rounded-lg text-xs font-medium">Patients</div>
-                        <div className="px-3 py-1.5 bg-white/20 rounded-lg text-xs font-medium">Reports</div>
-                        <div className="px-3 py-1.5 bg-white/20 rounded-lg text-xs font-medium">Billing</div>
-                    </div>
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                    <h2 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                        <Package size={18} className="text-gray-400" /> Your Modules
+                    </h2>
+                    {data?.modules?.length ? (
+                        <div className="space-y-2">
+                            {data.modules.map(m => (
+                                <div key={m.slug} className="flex items-center justify-between gap-3 py-2 border-b border-gray-50 last:border-0">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-800">{m.name}</p>
+                                        {m.description && <p className="text-xs text-gray-400">{m.description}</p>}
+                                    </div>
+                                    <span className="text-xs font-medium text-gray-600">৳{Number(m.price).toLocaleString()}/mo</span>
+                                </div>
+                            ))}
+                        </div>
+                    ) : (
+                        <p className="text-sm text-gray-400">No modules are active for this lab yet.</p>
+                    )}
                 </div>
             </div>
         </div>

@@ -13,6 +13,7 @@ import {
 
 const STATUS_COLORS = {
     active: '#10b981',
+    pending: '#eab308',
     trial: '#6366f1',
     suspended: '#f97316',
     expired: '#ef4444',
@@ -62,6 +63,7 @@ export default function AdminDashboard() {
 
     const statusData = [
         { name: 'Active', value: stats?.active ?? 0, color: STATUS_COLORS.active },
+        { name: 'Pending', value: stats?.pending ?? 0, color: STATUS_COLORS.pending },
         { name: 'On Trial', value: stats?.trial ?? 0, color: STATUS_COLORS.trial },
         { name: 'Suspended', value: stats?.suspended ?? 0, color: STATUS_COLORS.suspended },
         { name: 'Expired', value: stats?.expired ?? 0, color: STATUS_COLORS.expired },
@@ -93,6 +95,7 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
                 <StatCard label="Total Labs" value={stats?.total ?? 0} icon={Building2} color="blue" />
                 <StatCard label="Active" value={stats?.active ?? 0} icon={CheckCircle} color="emerald" />
+                <StatCard label="Pending" value={stats?.pending ?? 0} icon={Clock} color="orange" />
                 <StatCard label="On Trial" value={stats?.trial ?? 0} icon={Clock} color="indigo" />
                 <StatCard label="Suspended" value={stats?.suspended ?? 0} icon={AlertTriangle} color="orange" />
                 <StatCard label="Expired" value={stats?.expired ?? 0} icon={XCircle} color="red" />

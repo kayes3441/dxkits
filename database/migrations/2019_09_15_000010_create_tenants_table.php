@@ -21,7 +21,7 @@ class CreateTenantsTable extends Migration
             $table->string('logo')->nullable();
             $table->string('contact_person')->nullable();
 
-            $table->enum('status', ['active', 'suspended', 'trial', 'expired'])->default('trial');
+            $table->enum('status', ['pending', 'active', 'suspended', 'trial', 'expired'])->default('pending');
             $table->date('trial_ends_at')->nullable();
             $table->date('subscription_starts_at')->nullable();
             $table->date('subscription_ends_at')->nullable();

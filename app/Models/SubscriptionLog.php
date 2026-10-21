@@ -12,7 +12,6 @@ class SubscriptionLog extends Model
     protected $fillable = [
         'tenant_id',
         'action',
-        'plan',
         'amount',
         'period_start',
         'period_end',

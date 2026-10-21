@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\SubscriptionLog;
+use App\Models\Invoice;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -59,7 +59,7 @@ class DiagnosticController extends Controller
             'address' => $request->address,
             'city' => $request->city,
             'contact_person' => $request->contact_person,
-            'status' => 'active',
+            'status' => 'pending',
             'trial_ends_at' => null,
             'monthly_fee' => $monthlyFee,
             'payment_status' => 'pending',
@@ -103,9 +103,10 @@ class DiagnosticController extends Controller
             'city' => 'nullable|string|max:100',
             'contact_person' => 'nullable|string|max:255',
             'subscription_ends_at' => 'nullable|date',
+            'status' => 'nullable|in:pending,active,trial,suspended,expired',
         ]);
 
-        $tenant->update($request->only(['name', 'phone', 'address', 'city', 'contact_person', 'subscription_ends_at']));
+        $tenant->update($request->only(['name', 'phone', 'address', 'city', 'contact_person', 'subscription_ends_at', 'status']));
 
         return response()->json(['message' => 'Diagnostic center updated.', 'tenant' => $tenant->fresh()]);
     }
@@ -122,11 +123,12 @@ class DiagnosticController extends Controller
         return response()->json([
             'total' => Tenant::count(),
             'active' => Tenant::where('status', 'active')->count(),
+            'pending' => Tenant::where('status', 'pending')->count(),
             'trial' => Tenant::where('status', 'trial')->count(),
             'suspended' => Tenant::where('status', 'suspended')->count(),
             'expired' => Tenant::where('status', 'expired')->count(),
-            'revenue' => SubscriptionLog::where('action', 'renewed')->sum('amount'),
-            'this_month_revenue' => SubscriptionLog::where('action', 'renewed')
+            'revenue' => Invoice::where('status', 'paid')->sum('amount'),
+            'this_month_revenue' => Invoice::where('status', 'paid')
                 ->whereMonth('created_at', now()->month)
                 ->whereYear('created_at', now()->year)
                 ->sum('amount'),

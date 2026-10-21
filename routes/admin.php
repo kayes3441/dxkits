@@ -50,7 +50,6 @@ Route::prefix('admin')->group(function () {
 
         // Invoices
         Route::get('diagnostics/{id}/invoices', [InvoiceController::class, 'index']);
-        Route::post('diagnostics/{id}/invoices', [InvoiceController::class, 'store']);
         Route::put('invoices/{id}', [InvoiceController::class, 'update']);
     });
 });

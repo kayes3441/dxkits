@@ -26,12 +26,24 @@ class AuthController extends Controller
             return response()->json(['message' => 'Invalid email or password.'], 401);
         }
 
+        if ($tenant->status === 'pending') {
+            return response()->json(['message' => 'Your account is awaiting activation. Please contact support.'], 403);
+        }
+
         if ($tenant->status === 'suspended') {
             return response()->json(['message' => 'Your account has been suspended. Please contact support.'], 403);
         }
 
         if ($tenant->status === 'expired') {
-            return response()->json(['message' => 'Your subscription has expired. Please renew your plan.'], 403);
+            return response()->json(['message' => 'Your subscription has expired. Please renew your subscription.'], 403);
+        }
+
+        // Subscription window is driven by invoices: it ends when the current
+        // period (first invoice date + paid months) is over.
+        if ($tenant->status === 'active' && $tenant->subscription_ends_at && $tenant->subscription_ends_at->isPast()) {
+            $tenant->update(['status' => 'expired']);
+
+            return response()->json(['message' => 'Your subscription has expired. Please renew your subscription.'], 403);
         }
 
         // Check trial expiry
@@ -51,11 +63,15 @@ class AuthController extends Controller
                 'id' => $tenant->id,
                 'name' => $tenant->name,
                 'email' => $tenant->email,
-                'plan' => $tenant->plan,
                 'status' => $tenant->status,
+                'payment_status' => $tenant->payment_status,
                 'trial_ends_at' => $tenant->trial_ends_at,
+                'subscription_starts_at' => $tenant->subscription_starts_at,
                 'subscription_ends_at' => $tenant->subscription_ends_at,
             ],
+            'modules' => collect(config('modules.modules', []))
+                ->filter(fn ($m) => in_array($m['slug'], $tenant->modules ?? [], true))
+                ->values(),
         ]);
     }
 
@@ -63,19 +79,25 @@ class AuthController extends Controller
     {
         $tenant = Auth::guard('tenant')->user();
 
+        $subscribed = collect(config('modules.modules', []))
+            ->filter(fn ($m) => in_array($m['slug'], $tenant->modules ?? [], true))
+            ->values();
+
         return response()->json([
             'tenant' => [
                 'id' => $tenant->id,
                 'name' => $tenant->name,
                 'email' => $tenant->email,
-                'plan' => $tenant->plan,
                 'status' => $tenant->status,
+                'payment_status' => $tenant->payment_status,
                 'trial_ends_at' => $tenant->trial_ends_at,
+                'subscription_starts_at' => $tenant->subscription_starts_at,
                 'subscription_ends_at' => $tenant->subscription_ends_at,
                 'phone' => $tenant->phone,
                 'address' => $tenant->address,
                 'city' => $tenant->city,
             ],
+            'modules' => $subscribed,
         ]);
     }
 
