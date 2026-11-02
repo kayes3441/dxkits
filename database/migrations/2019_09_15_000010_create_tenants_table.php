@@ -31,6 +31,12 @@ class CreateTenantsTable extends Migration
             $table->timestamps();
             $table->softDeletes();
             $table->json('data')->nullable();
+
+            // Indexes for the columns the admin portal filters and sorts on.
+            $table->index('status');
+            $table->index('deleted_at');
+            $table->index('created_at');
+            $table->index(['status', 'created_at']);
         });
     }
 

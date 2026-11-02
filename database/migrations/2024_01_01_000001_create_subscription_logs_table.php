@@ -19,6 +19,12 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('tenant_id')->references('id')->on('tenants')->onDelete('cascade');
+
+            // Indexes for per-lab history lookups and action filtering.
+            $table->index('tenant_id');
+            $table->index('action');
+            $table->index('created_at');
+            $table->index(['action', 'created_at']);
         });
     }
 

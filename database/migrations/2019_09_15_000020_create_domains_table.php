@@ -10,8 +10,6 @@ class CreateDomainsTable extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
     public function up(): void
     {
@@ -22,13 +20,14 @@ class CreateDomainsTable extends Migration
 
             $table->timestamps();
             $table->foreign('tenant_id')->references('id')->on('tenants')->onUpdate('cascade')->onDelete('cascade');
+
+            // Index for resolving domains by tenant.
+            $table->index('tenant_id');
         });
     }
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
     public function down(): void
     {

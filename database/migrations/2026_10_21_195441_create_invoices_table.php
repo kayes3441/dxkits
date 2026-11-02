@@ -19,6 +19,13 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('tenant_id')->references('id')->on('tenants')->cascadeOnDelete();
+
+            // Indexes for invoice listing, status filtering and revenue reporting.
+            $table->index('tenant_id');
+            $table->index('status');
+            $table->index('issued_at');
+            $table->index('created_at');
+            $table->index(['status', 'created_at']);
         });
     }
 

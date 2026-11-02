@@ -17,6 +17,10 @@ return new class extends Migration
             $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
+
+            // Indexes for role and active-state lookups.
+            $table->index('role');
+            $table->index('is_active');
         });
     }
 
